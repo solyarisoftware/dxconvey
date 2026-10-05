@@ -134,9 +134,10 @@ to the instrument is still open — and the pitch EG table the conversion rests 
 is a decision, not a measurement, which is why it is a named option
 (`--peg-factors`) rather than a hidden default.
 
-One detail of that package, so the discrepancy is not a surprise: **it credits
-the tool under the name it was built with**, not under `dxconvey`. From the first
-release the credit reads `dxconvey`.
+One detail of that package, so it is not a surprise: **it credits the tool under
+an earlier working name**, not under `dxconvey`. That name has been retired. The
+credit inside the downloadable package is the only place it survives, and no part
+of this repository uses it.
 
 The sounds carry their own license, written for them (free to use in music,
 commercial projects included; not free to redistribute). That license covers the
@@ -181,7 +182,7 @@ And because the conversion is a set of decisions, the decisions are on the
 command line too:
 
 ```bash
-dxconvey convert <dump>.syx --banks -o out/ --peg-factors dxconvert
+dxconvey convert <dump>.syx --banks -o out/ --peg-factors halving
 #                                                    ^ name the convention,
 #                                                      do not inherit it
 ```
