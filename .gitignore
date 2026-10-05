@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Conversion output
+out/
+
+# SysEx data is not part of this project: see "What this project is not" in the
+# README. This line is a safeguard, not a policy statement — dumps of other
+# people's patches must never land here by accident. An example dump, if one is
+# ever published, would be exempted explicitly (for instance `!examples/*.syx`).
+*.syx
