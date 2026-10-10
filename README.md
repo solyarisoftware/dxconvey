@@ -197,8 +197,8 @@ When it is released, the repository will ship:
   controllers of both machines and the fourteen function parameters; MIDI as a
   cable — the channels, program change, the bulk dump and the parameter change;
   the 32 algorithms with routing and how each one sounds; the 13 micro tunings;
-  panning; polyphony; the hardware of the two machines; the conversion spec and
-  its decision register; and every source used, with links;
+  panning; polyphony; the hardware of the two machines; the conversion, with its
+  register of what a conversion loses; and every source used, with links;
 - worked examples: one command per sample, and the test that keeps the two in
   sync.
 
