@@ -168,13 +168,13 @@ shipped here: the download lives on the author's page.
 The target interface, not a release:
 
 ```bash
-dxconvey dump <dump>.syx                    # what is in this file
-dxconvey dump <dump>.syx --diagram          # the layout: one box per SysEx message
-dxconvey performance <dump>.syx --brief     # the performance sheets
-dxconvey voice <dump>.syx --slot 16         # one voice, in full
-dxconvey algorithm 5 --used --in <dir>      # a reference sheet, plus who uses it
-dxconvey tuning 5                           # one of the 13 micro tunings
-dxconvey convert <dump>.syx --banks -o out/ # the CONVersion
+dxconvey show <dump>.syx                     # what is in this file (the inventory)
+dxconvey show <dump>.syx --diagram           # the layout: one box per SysEx message
+dxconvey show performance <dump>.syx --brief  # the performance sheets
+dxconvey show voice <dump>.syx --slot 16     # one voice, in full
+dxconvey algorithm 5 --used --in <dir>       # a reference sheet, plus who uses it
+dxconvey tuning 5                            # one of the 13 micro tunings
+dxconvey convert <dump>.syx --banks -o out/  # the CONVersion
 dxconvey converse "make the release shorter" # the CONVersation (later; the EG release, in words)
 ```
 
@@ -192,9 +192,12 @@ When it is released, the repository will ship:
 - the package and the CLI above, with tests — including a corpus test that pins
   the bytes of every file it is given;
 - **the reference documentation**: the SysEx formats byte by byte, with block
-  diagrams; the 32 algorithms with routing and how each one sounds; the
-  envelopes; the 13 micro tunings; panning; polyphony; the conversion spec and
-  its decision register; and every source used, with links;
+  diagrams; the operator and its pitch, level and touch; the envelopes; the
+  keyboard scaling; the LFO and the feedback; the controllers of both machines
+  and the fourteen function parameters; the 32 algorithms with routing and how
+  each one sounds; the 13 micro tunings; panning; polyphony; the hardware of the
+  two machines; the conversion spec and its decision register; and every source
+  used, with links;
 - worked examples: one command per sample, and the test that keeps the two in
   sync.
 
