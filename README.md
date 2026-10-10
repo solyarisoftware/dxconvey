@@ -193,11 +193,12 @@ When it is released, the repository will ship:
   the bytes of every file it is given;
 - **the reference documentation**: the SysEx formats byte by byte, with block
   diagrams; the operator and its pitch, level and touch; the envelopes; the
-  keyboard scaling; the LFO and the feedback; the controllers of both machines
-  and the fourteen function parameters; the 32 algorithms with routing and how
-  each one sounds; the 13 micro tunings; panning; polyphony; the hardware of the
-  two machines; the conversion spec and its decision register; and every source
-  used, with links;
+  keyboard scaling; the LFO and the feedback; the pitch EG and the glide; the
+  controllers of both machines and the fourteen function parameters; MIDI as a
+  cable — the channels, program change, the bulk dump and the parameter change;
+  the 32 algorithms with routing and how each one sounds; the 13 micro tunings;
+  panning; polyphony; the hardware of the two machines; the conversion spec and
+  its decision register; and every source used, with links;
 - worked examples: one command per sample, and the test that keeps the two in
   sync.
 
