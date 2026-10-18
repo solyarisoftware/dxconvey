@@ -55,9 +55,11 @@ performances, with names that belong to nobody. That dump is in the repository, 
 the script that writes it, so every text capture here can be run again.
 
 The tool draws its curves with the Braille patterns, two dots across and four down in one
-cell, which join into a continuous line: a figure is text, and it stays inside the block
-with the command that printed it. If your browser's code font has no Braille — some do
-not — the tool can draw the same figure with half blocks instead (`--glyphs block`).
+cell, which join into a continuous line in a terminal. A page cannot be told which font to
+use — GitHub strips the stylesheets, and the font a code block gets on Windows, Consolas,
+has no Braille at all — so the three runs that draw are here as pictures of the terminal:
+the same characters, the same colours, rendered once and shipped. The text of each run is
+in `examples/images/`, and the command under each picture prints it again.
 
 ### The dump, at a glance
 
@@ -98,95 +100,11 @@ $ dxconvey show layout example.syx
 ### A voice, in full
 
 One voice is six operators. The sheet says what kind of sound it is and how it
-behaves, gives the routing, what a DX7 keeps, the timing of the key-up, and the
-four rates and four levels of every operator:
+behaves, gives the routing, what a DX7 keeps, the timing of the key-up, the four
+rates and four levels of every operator, and then — with `--plots` — the six
+envelopes, one figure each, on one time axis and one key-up:
 
-```console
-$ dxconvey show voice example.syx --slot 1 --plots
-VOICE 1 · PAD 01
-────────────────────────────────────────────────────────────────────
-SOUND TYPE pad · certain
-BEHAVIOUR  slow swell, harmonic, rich
-algorithm  5 · three 2-operator pairs
-carriers   OP1 OP3 OP5 · 3 of 6 reach the output
-feedback   OP6 on itself
-┌─────┐  ┌─────┐  ┌─────┐
-│ OP2 │  │ OP4 │  │ OP6 │◀─╮
-└──┬──┘  └──┬──┘  └──┬──┴──╯
-   │        │        │
-┌──▼──┐  ┌──▼──┐  ┌──▼──┐
-│ OP1 │  │ OP3 │  │ OP5 │
-└──┬──┘  └──┬──┘  └──┬──┘
-   └────────┼────────┘
-            ▼
-         OUTPUT
-
-TOUCH      MIDI velocity OP2 OP4 OP6 KVS 3 (modulators brighter)
-timing     C4 · key up at 6.42 s, one second after the slowest carrier
-           reaches its sustain level; programmed levels only, live
-           velocity/controller offsets not applied
-carrier EG OP1 at C4: key up 6.42 s, time to silence 2.77 s
-carrier EG OP3 at C4: key up 6.42 s, time to silence 1.72 s
-carrier EG OP5 at C4: key up 6.42 s, time to silence 1.41 s
-envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
-op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
-OP6  modulator d1   2.00   +0     85   3  40 30 25 50    99 85 75  0   0
-OP5  carrier        3.00   +0     75   0  32 35 28 45    99 90 70  0   0
-OP4  modulator d1   1.00   +0     78   3  45 35 30 50    99 88 78  0   0
-OP3  carrier        2.00   +0     88   0  30 32 26 45    99 92 72  0   0
-OP2  modulator d1   1.00   +0     72   3  38 30 28 55    99 86 76  0   0
-OP1  carrier        1.00   +0     99   0  28 30 24 42    99 95 78  0   0
-
-volume     the amplitude envelope of the voice is that of OP1, the carrier
-           that lives longest
-portability exact - no DX7II-only voice settings are set
-
-figures    the six operator envelopes at C4, one figure each; the six
-           figures share one time axis and one key-up, one second after the
-           slowest carrier reaches its sustain level
-OP1 carrier                            OP2 modulator d1
-  dB                                     dB
-   0┤⠅  ⢀⡠⠔⠊⠑⠓⠒⠢⠤⠤⠤⣀⣀⣀ ⠁  ⠨               0┤⠅⠁L1=99  ⠁           ⠨
- -20┤⠅ ⡔⠊  ⠈L1=99     ⠉⠉⠉⠉⠩⠢⡀           -20┤⢥⠣⠤⣀⡈ L2=86          ⠨
- -40┤⢅⠎    ⠈ ⠁L2=95    ⠁  ⠨ ⠈⠢⡀         -40┤⡽⠁  ⠈⠉⠉⠒⠒⠓⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⢺
- -60┤⡇     ⠈ ⠁    L3=78⠁  ⠨   ⠈⢢        -60┤⡇⠁  ⠈    ⠁L3=76      ⠨⡆
-    │⡇     ⠈ ⠁         ⠁  ⠨     ⠑⢄         │⡇⠁  ⠈    ⠁           ⠨⢣ L4=0
- -80┤⡇     ⠈ ⠁         ⠁  ⠨       ⠑⢄⣀   -80┤⡇⠁  ⠈    ⠁           ⠨⠘⣄⣀⣀⣀⣀⣀⣀⣀⣀
-    └┴─────┴─┴─────────┴──┴────────┴─      └┴┴──┴────┴───────────┴─┴────────
-       R1        R3          R4              R2  R3    sustain
-           R2          sustain              R1                   R4
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
-     ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
-OP3 carrier                            OP4 modulator d1
-  dB                                     dB
-   0┤⠅ ⢀⠥⣀⡁ L2=92    ⠁    ⠨               0┤⠍ L1=99              ⠨
- -20┤⠅⢠⠊⠁ ⠉⠉⠉⠑⠒⠒⠢⠤⠤⢄⣀⣁⣀⣀⣀⣀⣨             -20┤⢽⠒⠬⢄⣀⠈L3=78          ⠨
- -40┤⢵⠁ ⠁L1=99  L3=72⠁    ⠨⠣⡀           -40┤⡏ ⠈  ⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠹⡄
- -60┤⡇  ⠁ ⠁          ⠁    ⠨ ⠑⢄          -60┤⡏ ⠈L2=88             ⠨⢱
-    │⡇  ⠁ ⠁          ⠁    ⠨  ⠈⢢  L4=0      │⡏ ⠈  ⠈               ⠨ ⢇ L4=0
- -80┤⡇  ⠁ ⠁          ⠁    ⠨    ⠑⣄⣀⣀⣀⣀   -80┤⡏ ⠈  ⠈               ⠨ ⠘⣄⣀⣀⣀⣀⣀⣀⣀
-    └┴──┴─┴──────────┴────┴─────┴────      └┴─┴──┴───────────────┴──┴───────
-     R1       R3            R4                R3     sustain     R4
-        R2           sustain                R1 R2
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
-     ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
-OP5 carrier                            OP6 modulator d1
-  dB                                     dB
-   0┤⠅⠈L1=99     ⠁        ⠨               0┤⠅⣁⡀  ⠈L2=85⠁L3=75    ⠨
- -20┤⠅⢸⠒⠥⣀⣀⡀     ⠁L3=70   ⠨             -20┤⢵⠁⠈⠉⠒⠚⠤⠤⠤⣀⣀⣁⣀⣀⣀⣀⣀⣀⣀⣀⣀⣨
- -40┤⢵⠉ ⠁  ⠈⠉⠉⠒⠒⠤⠥⠤⠤⠤⠤⠤⠤⠤⠤⠬⡀            -40┤⡏⠁L1=99    ⠁         ⠨⡆
- -60┤⡇⠈ ⠁L2=90   ⠁        ⠨⠑⡄           -60┤⡇⠁   ⠈     ⠁         ⠨⠱⡀
-    │⡇⠈ ⠁        ⠁        ⠨ ⠈⢢  L4=0       │⡇⠁   ⠈     ⠁         ⠨ ⢣ L4=0
- -80┤⡇⠈ ⠁        ⠁        ⠨   ⠑⣄⣀⣀⣀⣀⣀   -80┤⡇⠁   ⠈     ⠁         ⠨ ⠈⣆⣀⣀⣀⣀⣀⣀⣀
-    └┴┴─┴────────┴────────┴────┴─────      └┴┴───┴─────┴─────────┴──┴───────
-           R3     sustain  R4                 R2   R3   sustain  R4
-     R1 R2                                  R1
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
-     ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
-```
+![the run of show voice, with the six operator envelopes](examples/images/voice-1-with-plots.png)
 
 ### The performances
 
@@ -414,34 +332,7 @@ $ dxconvey algorithm 5
 The LFO has six shapes and two depths, and the voice stores three bits to pick the
 shape. The figure is the whole set on one grid, with the two depths of each:
 
-```console
-$ dxconvey lfo waves --plot --no-table --wave all
-  0  triangle                            1  saw down
-  mod                                    mod
-    1┤      ⣠⠞⢦            ⡴⠳⣄             1┤       ⢸⠲⢄⡀           ⡟⠲⣄⡀
-  0.5┤    ⢀⡜⠁  ⠳⡄        ⢠⠞  ⠈⢣⡀         0.5┤       ⢸  ⠉⠳⢤⡀        ⡇  ⠙⠲⣄⡀
-    0┤   ⣠⠋     ⠈⢦⡀    ⢀⡴⠁     ⠙⣄          0┤⠤⣀     ⢸     ⠉⠓⢤⣀     ⡇     ⠉⠲
-      │ ⢀⠞⠁        ⠱⣄  ⣠⠎        ⠈⠳⡀         │ ⠈⠙⠦⣄  ⢸        ⠈⠓⢦⣀  ⡇
-   -1┤⡴⠋           ⠈⢦⡴⠁           ⠙⢦      -1┤    ⠈⠙⠦⣼           ⠈⠑⠦⡇
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  2  saw up                              3  square
-  mod                                    mod
-    1┤    ⢀⣠⠖⢻           ⢀⡠⠖⡇              1┤⠉⠉⠉⠉⠉⠉⠉⢹       ⡏⠉⠉⠉⠉⠉⠉⡇      ⢸
-  0.5┤ ⢀⣠⠖⠋  ⢸        ⢀⡤⠞⠉  ⡇            0.5┤       ⢸       ⡇      ⡇      ⢸
-    0┤⠖⠉     ⢸     ⣀⡤⠞⠉     ⡇     ⣀⠤       0┤       ⢸      ⢠⠃      ⡇      ⢸
-      │       ⢸  ⣀⡴⠚⠁        ⡇  ⣠⠴⠋⠁         │       ⢸      ⢸       ⡇      ⢸
-   -1┤       ⢸⠴⠊⠁           ⣧⠴⠋⠁          -1┤       ⢸⣀⣀⣀⣀⣀⣀⣸       ⣇⣀⣀⣀⣀⣀⣀⣸
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  4  sine                                5  sample&hold
-  mod                                    mod
-    1┤ ⢀⡴⠋⠙⢦          ⢠⠞⠉⠑⢆                1┤
-  0.5┤⢀⠎    ⢳⡀       ⢠⠋   ⠈⢧             0.5┤
-    0┤⠎      ⢳⡀     ⢠⠇     ⠈⢧      ⡠       0┤⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠦⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
-      │        ⢳⡀   ⣠⠃       ⠈⢧    ⡰⠁        │                             ⢸
-   -1┤         ⠱⢄⣀⡴⠃          ⠳⣄⣠⠞⠁       -1┤                             ⠈
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  6 shapes · 359 ms across
-```
+![the run of lfo waves, with the six waveforms](examples/images/lfo-waves.png)
 
 ### One envelope, timed
 
@@ -449,40 +340,7 @@ Four rates and four levels are all a DX7 envelope is. The model turns them into
 seconds; the figure carries the note-on, the key-up and the sustain, and the table
 under it gives every segment:
 
-```console
-$ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
-  dB
-   0┤⣧⠁L1=99          ⠈                                         ⠨
-    │⡏⡇ L2=85         ⠈                                         ⠨
-    │⡇⠉⠉⠒⠤⢄⡀          ⠈                                         ⠨
- -20┤⡇⠁    ⠈⠉⠒⠢⢄⣀     ⠈                                         ⠨
-    │⡇⠁          ⠉⠑⠢⠤⣀⡈ L3=60                                   ⠨
-    │⡇⠁               ⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠩⢢
-    │⡇⠁               ⠈                                         ⠨ ⠑⢄
- -40┤⡇⠁               ⠈                                         ⠨   ⠣⡀
-    │⡇⠁               ⠈                                         ⠨    ⠈⢢
-    │⡇⠁               ⠈                                         ⠨      ⠑⢄
- -60┤⡇⠁               ⠈                                         ⠨       ⠈⠢⡀
-    │⡇⠁               ⠈                                         ⠨         ⠈⢆
-    │⡇⠁               ⠈                                         ⠨           ⠑⢄
-    │⡇⠁               ⠈                                         ⠨            ⠈⠢⡀
- -80┤⡇⠁               ⠈                                         ⠨              ⠈⢆
-    │⡇⠁               ⠈                                         ⠨                ⠑⣄⣀⣀
-    └┴┴───────────────┴─────────────────────────────────────────┴─────────────────┴──
-             R3                        sustain                          R4
-     R1 R2
-     0       0.5 s       1 s      1.5 s      2 s       2.5 s      3 s       3.5 s
-     ↑ note-on (key down)                                       ↓ note-off (key up)
-
-segment  rate  goes to   distance  duration
-R1         95  L1 99   +  50.0 dB  1.2 ms
-R2         60  L2 85   -  10.5 dB  49 ms
-R3         40  L3 60   -  18.1 dB  801 ms
-sustain     -  (held)              2.00 s
-R4         50  L4  0   -  61.3 dB  850 ms
-note-on: the level starts at once 50.0 dB below the top, the first rise begins there
-total 3.70 s (key up at 2.85 s)
-```
+![the run of envelope, with the curve and the table](examples/images/envelope.png)
 
 ## A conversion with a register of losses
 

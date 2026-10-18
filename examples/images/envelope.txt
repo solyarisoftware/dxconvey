@@ -1,0 +1,32 @@
+$ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
+  dB
+   0┤⣧⠁L1=99          ⠈                                         ⠨
+    │⡏⡇ L2=85         ⠈                                         ⠨
+    │⡇⠉⠉⠒⠤⢄⡀          ⠈                                         ⠨
+ -20┤⡇⠁    ⠈⠉⠒⠢⢄⣀     ⠈                                         ⠨
+    │⡇⠁          ⠉⠑⠢⠤⣀⡈ L3=60                                   ⠨
+    │⡇⠁               ⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠩⢢
+    │⡇⠁               ⠈                                         ⠨ ⠑⢄
+ -40┤⡇⠁               ⠈                                         ⠨   ⠣⡀
+    │⡇⠁               ⠈                                         ⠨    ⠈⢢
+    │⡇⠁               ⠈                                         ⠨      ⠑⢄
+ -60┤⡇⠁               ⠈                                         ⠨       ⠈⠢⡀
+    │⡇⠁               ⠈                                         ⠨         ⠈⢆
+    │⡇⠁               ⠈                                         ⠨           ⠑⢄
+    │⡇⠁               ⠈                                         ⠨            ⠈⠢⡀
+ -80┤⡇⠁               ⠈                                         ⠨              ⠈⢆
+    │⡇⠁               ⠈                                         ⠨                ⠑⣄⣀⣀
+    └┴┴───────────────┴─────────────────────────────────────────┴─────────────────┴──
+             R3                        sustain                          R4
+     R1 R2
+     0       0.5 s       1 s      1.5 s      2 s       2.5 s      3 s       3.5 s
+     ↑ note-on (key down)                                       ↓ note-off (key up)
+
+segment  rate  goes to   distance  duration
+R1         95  L1 99   +  50.0 dB  1.2 ms
+R2         60  L2 85   -  10.5 dB  49 ms
+R3         40  L3 60   -  18.1 dB  801 ms
+sustain     -  (held)              2.00 s
+R4         50  L4  0   -  61.3 dB  850 ms
+note-on: the level starts at once 50.0 dB below the top, the first rise begins there
+total 3.70 s (key up at 2.85 s)
