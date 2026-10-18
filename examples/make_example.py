@@ -56,9 +56,89 @@ def data_change(half: int) -> bytes:
     return bytes([0xF0, 0x43, 0x10, 0x19, 0x4D, half, 0xF7])
 
 
+def an_operator(
+    level: int,
+    coarse: int,
+    *,
+    detune: int = 7,
+    rate_scaling: int = 0,
+    kvs: int = 0,
+    ams: int = 0,
+    rates: tuple[int, int, int, int] = (99, 99, 99, 99),
+    levels: tuple[int, int, int, int] = (99, 99, 99, 0),
+    fine: int = 0,
+) -> bytes:
+    """The 17 bytes of one operator, in the order the voice record keeps them."""
+    return bytes(
+        [*rates, *levels, 0, 0, 0, 0, (detune << 3) | rate_scaling,
+         (kvs << 2) | ams, level, coarse << 1, fine]
+    )
+
+
+#: Four voices, cycled by slot: six operators in record order (OP6 first), the
+#: algorithm (0-based) and the feedback amount.  They are written to sound like what
+#: their names say, so that the sheets and the envelope figures have something to
+#: show that is not the init voice six times.
+DESIGNS = (
+    {   # PAD — three pairs, slow attack, long tail
+        "algorithm": 4,        # algorithm 5
+        "feedback": 4,
+        "operators": (
+            an_operator(85, 2, kvs=3, rates=(40, 30, 25, 50), levels=(99, 85, 75, 0)),
+            an_operator(75, 3, rates=(32, 35, 28, 45), levels=(99, 90, 70, 0)),
+            an_operator(78, 1, kvs=3, rates=(45, 35, 30, 50), levels=(99, 88, 78, 0)),
+            an_operator(88, 2, rates=(30, 32, 26, 45), levels=(99, 92, 72, 0)),
+            an_operator(72, 1, kvs=3, rates=(38, 30, 28, 55), levels=(99, 86, 76, 0)),
+            an_operator(99, 1, rates=(28, 30, 24, 42), levels=(99, 95, 78, 0)),
+        ),
+    },
+    {   # BELL — a four-operator chain with feedback, and a pair beside it
+        "algorithm": 0,        # algorithm 1
+        "feedback": 6,
+        "operators": (
+            an_operator(82, 11, rates=(99, 60, 40, 70), levels=(99, 80, 60, 0)),
+            an_operator(78, 7, rates=(99, 55, 38, 70), levels=(99, 78, 55, 0)),
+            an_operator(74, 3, rates=(99, 50, 35, 70), levels=(99, 75, 50, 0)),
+            an_operator(99, 1, rates=(99, 45, 30, 65), levels=(99, 70, 0, 0)),
+            an_operator(70, 14, rates=(99, 65, 45, 75), levels=(99, 85, 65, 0)),
+            an_operator(92, 1, rates=(99, 42, 28, 62), levels=(99, 65, 0, 0)),
+        ),
+    },
+    {   # ORGAN — six carriers added, one drawbar each
+        "algorithm": 31,       # algorithm 32
+        "feedback": 0,
+        "operators": (
+            an_operator(56, 8, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+            an_operator(64, 6, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+            an_operator(72, 4, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+            an_operator(80, 3, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+            an_operator(88, 2, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+            an_operator(99, 1, rates=(99, 99, 99, 80), levels=(99, 99, 99, 0)),
+        ),
+    },
+    {   # BRASS — one modulator onto three carriers, the classic swell
+        "algorithm": 21,       # algorithm 22
+        "feedback": 5,
+        "operators": (
+            an_operator(88, 1, kvs=5, rates=(95, 45, 30, 60), levels=(99, 80, 60, 0)),
+            an_operator(94, 1, rates=(90, 40, 28, 55), levels=(99, 90, 70, 0)),
+            an_operator(0, 1, rates=(99, 99, 99, 99), levels=(99, 99, 99, 0)),
+            an_operator(92, 2, rates=(88, 42, 26, 58), levels=(99, 88, 68, 0)),
+            an_operator(99, 1, rates=(85, 38, 25, 55), levels=(99, 92, 72, 0)),
+            an_operator(0, 1, rates=(99, 99, 99, 99), levels=(99, 99, 99, 0)),
+        ),
+    },
+)
+
+
 def a_voice(slot: int) -> bytes:
-    """One DX7 voice: the init voice, with a name of its own."""
+    """One DX7 voice: a design of its own, and a name of its own."""
+    design = DESIGNS[slot % 4]
     voice = bytearray(INIT_VOICE)
+    for index, operator in enumerate(design["operators"]):
+        voice[index * 17 : (index + 1) * 17] = operator
+    voice[110] = design["algorithm"]
+    voice[111] = design["feedback"]
     name = f"{WORDS[slot % 4]} {slot + 1:02d}"
     voice[118:128] = name.encode("latin-1").ljust(10, b" ")[:10]
     return bytes(voice)

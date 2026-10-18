@@ -52,7 +52,13 @@ Every run below is real, and every figure is drawn by the tool. The code is not 
 repository yet — it lands with the conversion — but the numbers are not a mock-up: they
 come from `examples/example.syx`, a synthetic DX7II All-Data of 64 voices and 32
 performances, with names that belong to nobody. That dump is in the repository, and so is
-the script that writes it, so every capture here can be checked.
+the script that writes it, so every text capture here can be run again.
+
+The curves are the one thing shown as a picture. The tool draws them with the Braille
+patterns, which join into a continuous line in a terminal; a page has no such font, and
+the characters fall apart. So each figure below is the text of the run, drawn as an SVG
+by [`examples/figure_svg.py`](examples/figure_svg.py) — exact coordinates, no font to
+fail. The text of the same run is in `examples/figures/`.
 
 ### The dump, at a glance
 
@@ -94,6 +100,106 @@ $ dxconvey show layout example.syx
   └──────────┴─────────┴──────────┴──────────┴─────────┴──────────┴─────────┘
    @0         @7        @1,135     @5,239     @5,246    @6,374     @10,478
   (AMEM and VMEM of a half hold the same 32 voice slots: the DX7 half and its DX7II supplement)
+```
+
+### A voice, in full
+
+One voice is six operators. The sheet gives the routing, what a DX7 keeps, the
+timing of the key-up, and the four rates and four levels of every operator:
+
+```bash
+$ dxconvey show voice example.syx --slot 1 --plots
+```
+
+```text
+VOICE 1 · PAD 01
+────────────────────────────────────────────────────────────────────
+SOUND TYPE pad · certain
+BEHAVIOUR  slow swell, harmonic, rich
+algorithm  5 · three 2-operator pairs
+carriers   OP1 OP3 OP5 · 3 of 6 reach the output
+feedback   OP6 on itself
+┌─────┐  ┌─────┐  ┌─────┐
+│ OP2 │  │ OP4 │  │ OP6 │◀─╮
+└──┬──┘  └──┬──┘  └──┬──┴──╯
+   │        │        │
+┌──▼──┐  ┌──▼──┐  ┌──▼──┐
+│ OP1 │  │ OP3 │  │ OP5 │
+└──┬──┘  └──┬──┘  └──┬──┘
+   └────────┼────────┘
+            ▼
+         OUTPUT
+
+TOUCH      MIDI velocity OP2 OP4 OP6 KVS 3 (modulators brighter)
+timing     C4 · key up at 6.42 s, one second after the slowest carrier
+           reaches its sustain level; programmed levels only, live
+           velocity/controller offsets not applied
+carrier EG OP1 at C4: key up 6.42 s, time to silence 2.77 s
+carrier EG OP3 at C4: key up 6.42 s, time to silence 1.72 s
+carrier EG OP5 at C4: key up 6.42 s, time to silence 1.41 s
+envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
+op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
+OP6  modulator d1   2.00   +0     85   3  40 30 25 50    99 85 75  0   0
+OP5  carrier        3.00   +0     75   0  32 35 28 45    99 90 70  0   0
+OP4  modulator d1   1.00   +0     78   3  45 35 30 50    99 88 78  0   0
+OP3  carrier        2.00   +0     88   0  30 32 26 45    99 92 72  0   0
+OP2  modulator d1   1.00   +0     72   3  38 30 28 55    99 86 76  0   0
+OP1  carrier        1.00   +0     99   0  28 30 24 42    99 95 78  0   0
+
+volume     the amplitude envelope of the voice is that of OP1, the carrier
+           that lives longest
+portability exact - no DX7II-only voice settings are set
+
+```
+
+With `--plots` the same run draws the six envelopes, one figure each. The six figures
+share one time axis and one key-up, because that is how one voice is played:
+
+![the six operator envelopes of voice 1, at C4](examples/figures/voice-1-envelopes.svg)
+
+### The performances
+
+A performance is a pointer: two voices, a key mode, a split point, a tuning. One line
+each, and the first line counts what the bank holds.
+
+```bash
+$ dxconvey show performance example.syx
+```
+
+```text
+32 performances  ·  11 dual, 10 single, 11 split
+1    PAIR 01                  dual    A   1 PAD 01       alg  5  B   2 BELL 02      alg  1  detune 3
+2    SPLIT 02                 split   A   3 ORGAN 03     alg 32  B   4 BRASS 04     alg 22  split C4
+3    SINGLE 03                single  A   5 PAD 05       alg  5  --
+4    PAIR 04                  dual    A   7 ORGAN 07     alg 32  B   8 BRASS 08     alg 22  detune 3
+5    SPLIT 05                 split   A   9 PAD 09       alg  5  B  10 BELL 10      alg  1  split C4
+6    SINGLE 06                single  A  11 ORGAN 11     alg 32  --
+7    PAIR 07                  dual    A  13 PAD 13       alg  5  B  14 BELL 14      alg  1  detune 3
+8    SPLIT 08                 split   A  15 ORGAN 15     alg 32  B  16 BRASS 16     alg 22  split C4
+9    SINGLE 09                single  A  17 PAD 17       alg  5  --
+10   PAIR 10                  dual    A  19 ORGAN 19     alg 32  B  20 BRASS 20     alg 22  detune 3
+11   SPLIT 11                 split   A  21 PAD 21       alg  5  B  22 BELL 22      alg  1  split C4
+12   SINGLE 12                single  A  23 ORGAN 23     alg 32  --
+13   PAIR 13                  dual    A  25 PAD 25       alg  5  B  26 BELL 26      alg  1  detune 3
+14   SPLIT 14                 split   A  27 ORGAN 27     alg 32  B  28 BRASS 28     alg 22  split C4
+15   SINGLE 15                single  A  29 PAD 29       alg  5  --
+16   PAIR 16                  dual    A  31 ORGAN 31     alg 32  B  32 BRASS 32     alg 22  detune 3
+17   SPLIT 17                 split   A  33 PAD 33       alg  5  B  34 BELL 34      alg  1  split C4
+18   SINGLE 18                single  A  35 ORGAN 35     alg 32  --
+19   PAIR 19                  dual    A  37 PAD 37       alg  5  B  38 BELL 38      alg  1  detune 3
+20   SPLIT 20                 split   A  39 ORGAN 39     alg 32  B  40 BRASS 40     alg 22  split C4
+21   SINGLE 21                single  A  41 PAD 41       alg  5  --
+22   PAIR 22                  dual    A  43 ORGAN 43     alg 32  B  44 BRASS 44     alg 22  detune 3
+23   SPLIT 23                 split   A  45 PAD 45       alg  5  B  46 BELL 46      alg  1  split C4
+24   SINGLE 24                single  A  47 ORGAN 47     alg 32  --
+25   PAIR 25                  dual    A  49 PAD 49       alg  5  B  50 BELL 50      alg  1  detune 3
+26   SPLIT 26                 split   A  51 ORGAN 51     alg 32  B  52 BRASS 52     alg 22  split C4
+27   SINGLE 27                single  A  53 PAD 53       alg  5  --
+28   PAIR 28                  dual    A  55 ORGAN 55     alg 32  B  56 BRASS 56     alg 22  detune 3
+29   SPLIT 29                 split   A  57 PAD 57       alg  5  B  58 BELL 58      alg  1  split C4
+30   SINGLE 30                single  A  59 ORGAN 59     alg 32  --
+31   PAIR 31                  dual    A  61 PAD 61       alg  5  B  62 BELL 62      alg  1  detune 3
+32   SPLIT 32                 split   A  63 ORGAN 63     alg 32  B  64 BRASS 64     alg 22  split C4
 ```
 
 ### The conversion, and its bill
@@ -166,105 +272,31 @@ $ dxconvey algorithm 5
       The DX9 (4 operators) borrowed this one as its algorithm 5.
 ```
 
-<!-- optional: one of these two, the page is long with both -->
-
 ### Six waveforms, one figure
 
-The LFO has six shapes and two depths; the figure is drawn at the resolution of a
-Braille cell, so a cycle is legible as a line and not as a list of samples.
+The LFO has six shapes and two depths, and the voice stores three bits to pick the
+shape. The figure is the whole set on one grid, with the two depths of each:
 
 ```bash
-$ dxconvey lfo
+$ dxconvey lfo waves --plot --no-table --wave all
 ```
 
-```text
-LFO  the six waveforms, the two depths, the key sync and the mode
-
-waveforms  three bits of the voice pick one of six, in this order:
-  0  triangle     rises over the first half cycle and falls over the second
-  1  saw down     falls, starting from the middle of the cycle
-  2  saw up       rises, starting from the middle of the cycle
-  3  square       high for the first half cycle, low for the second
-  4  sine         the DX7's own sine, centred on the rest position
-  5  sample&hold  a new value at every cycle: the model's own generator
-
-depths     PMD 0-99 × pitch modulation sensitivity 0-7 · the vibrato, on
-           all six operators at once; AMD 0-99 × AMS 0-7 per operator ·
-           the tremolo. Both are only as strong as that sensitivity, and 0
-           there is silence (docs/instrument/operators.md §6.4)
-key sync   one bit of the voice (byte 116): on, the LFO starts from the
-           same point of its cycle at every key down; off, it runs free
-mode       [DX7II only] one bit of the supplement: single, one LFO for every
-           voice, as on a DX7; multi, one LFO per voice
-
-  0  triangle                            1  saw down
-  mod                                    mod
-    1┤      ⣠⠞⢦            ⡴⠳⣄             1┤       ⢸⠲⢄⡀           ⡟⠲⣄⡀
-  0.5┤    ⢀⡜⠁  ⠳⡄        ⢠⠞  ⠈⢣⡀         0.5┤       ⢸  ⠉⠳⢤⡀        ⡇  ⠙⠲⣄⡀
-    0┤   ⣠⠋     ⠈⢦⡀    ⢀⡴⠁     ⠙⣄          0┤⠤⣀     ⢸     ⠉⠓⢤⣀     ⡇     ⠉⠲
-      │ ⢀⠞⠁        ⠱⣄  ⣠⠎        ⠈⠳⡀         │ ⠈⠙⠦⣄  ⢸        ⠈⠓⢦⣀  ⡇
-   -1┤⡴⠋           ⠈⢦⡴⠁           ⠙⢦      -1┤    ⠈⠙⠦⣼           ⠈⠑⠦⡇
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  2  saw up                              3  square
-  mod                                    mod
-    1┤    ⢀⣠⠖⢻           ⢀⡠⠖⡇              1┤⠉⠉⠉⠉⠉⠉⠉⢹       ⡏⠉⠉⠉⠉⠉⠉⡇      ⢸
-  0.5┤ ⢀⣠⠖⠋  ⢸        ⢀⡤⠞⠉  ⡇            0.5┤       ⢸       ⡇      ⡇      ⢸
-    0┤⠖⠉     ⢸     ⣀⡤⠞⠉     ⡇     ⣀⠤       0┤       ⢸      ⢠⠃      ⡇      ⢸
-      │       ⢸  ⣀⡴⠚⠁        ⡇  ⣠⠴⠋⠁         │       ⢸      ⢸       ⡇      ⢸
-   -1┤       ⢸⠴⠊⠁           ⣧⠴⠋⠁          -1┤       ⢸⣀⣀⣀⣀⣀⣀⣸       ⣇⣀⣀⣀⣀⣀⣀⣸
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  4  sine                                5  sample&hold
-  mod                                    mod
-    1┤ ⢀⡴⠋⠙⢦          ⢠⠞⠉⠑⢆                1┤
-  0.5┤⢀⠎    ⢳⡀       ⢠⠋   ⠈⢧             0.5┤
-    0┤⠎      ⢳⡀     ⢠⠇     ⠈⢧      ⡠       0┤⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠦⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
-      │        ⢳⡀   ⣠⠃       ⠈⢧    ⡰⠁        │                             ⢸
-   -1┤         ⠱⢄⣀⡴⠃          ⠳⣄⣠⠞⠁       -1┤                             ⠈
-      └┬────────────────────────────┬        └┬────────────────────────────┬
-  6 shapes · 359 ms across
-
-a voice    `dxconvey lfo voice FILE --slot N` reads the LFO of one
-           voice of a dump: the only place a file can say what it
-           does with it
-more       `lfo rates` for a speed 0-99 in hertz and in seconds,
-           `lfo ramps` for the delay; docs/instrument/lfo.md, and
-           docs/instrument/operators.md §6.4 for the operator's side
-```
+![the six LFO waveforms](examples/figures/lfo-waves.svg)
 
 ### One envelope, timed
 
 Four rates and four levels are all a DX7 envelope is. The model turns them into
-seconds; the figure carries the note-on, the key-up and the sustain, and the table
-under it gives every segment.
+seconds, and the figure carries the note-on, the key-up and the sustain:
 
 ```bash
 $ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
 ```
 
-```text
-  dB
-   0┤⣧⠁L1=99          ⠈                                         ⠨
-    │⡏⡇ L2=85         ⠈                                         ⠨
-    │⡇⠉⠉⠒⠤⢄⡀          ⠈                                         ⠨
- -20┤⡇⠁    ⠈⠉⠒⠢⢄⣀     ⠈                                         ⠨
-    │⡇⠁          ⠉⠑⠢⠤⣀⡈ L3=60                                   ⠨
-    │⡇⠁               ⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠩⢢
-    │⡇⠁               ⠈                                         ⠨ ⠑⢄
- -40┤⡇⠁               ⠈                                         ⠨   ⠣⡀
-    │⡇⠁               ⠈                                         ⠨    ⠈⢢
-    │⡇⠁               ⠈                                         ⠨      ⠑⢄
- -60┤⡇⠁               ⠈                                         ⠨       ⠈⠢⡀
-    │⡇⠁               ⠈                                         ⠨         ⠈⢆
-    │⡇⠁               ⠈                                         ⠨           ⠑⢄
-    │⡇⠁               ⠈                                         ⠨            ⠈⠢⡀
- -80┤⡇⠁               ⠈                                         ⠨              ⠈⢆
-    │⡇⠁               ⠈                                         ⠨                ⠑⣄⣀⣀
-    └┴┴───────────────┴─────────────────────────────────────────┴─────────────────┴──
-             R3                        sustain                          R4
-     R1 R2
-     0       0.5 s       1 s      1.5 s      2 s       2.5 s      3 s       3.5 s
-     ↑ note-on (key down)                                       ↓ note-off (key up)
+![one envelope, timed](examples/figures/envelope-curve.svg)
 
+The same run goes on with the table of every segment:
+
+```text
 segment  rate  goes to   distance  duration
 R1         95  L1 99   +  50.0 dB  1.2 ms
 R2         60  L2 85   -  10.5 dB  49 ms
