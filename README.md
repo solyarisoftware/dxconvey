@@ -54,11 +54,10 @@ come from `examples/example.syx`, a synthetic DX7II All-Data of 64 voices and 32
 performances, with names that belong to nobody. That dump is in the repository, and so is
 the script that writes it, so every text capture here can be run again.
 
-The tool draws its curves with the Braille patterns, two dots across and four down in
-one cell, which join into a continuous line in a terminal. A page's code font has no such
-characters and the figure falls apart there, so the runs below ask for `--glyphs block`
-instead: one half block per cell, coarser, and legible in any monospace font. Every
-figure stays inside its block, with the command that printed it.
+The tool draws its curves with the Braille patterns, two dots across and four down in one
+cell, which join into a continuous line: a figure is text, and it stays inside the block
+with the command that printed it. If your browser's code font has no Braille — some do
+not — the tool can draw the same figure with half blocks instead (`--glyphs block`).
 
 ### The dump, at a glance
 
@@ -103,7 +102,7 @@ behaves, gives the routing, what a DX7 keeps, the timing of the key-up, and the
 four rates and four levels of every operator:
 
 ```console
-$ dxconvey show voice example.syx --slot 1 --plots --glyphs block
+$ dxconvey show voice example.syx --slot 1 --plots
 VOICE 1 · PAD 01
 ────────────────────────────────────────────────────────────────────
 SOUND TYPE pad · certain
@@ -147,44 +146,44 @@ figures    the six operator envelopes at C4, one figure each; the six
            slowest carrier reaches its sustain level
 OP1 carrier                            OP2 modulator d1
   dB                                     dB
-   0┤█   ▄▄▀▀▀▄▄▄▄▄▄▄  ▀  █               0┤█▀L1=99  ▀           █
- -20┤█ ▄▀   ▀L1=99   ▀▀▀▀▀█▄            -20┤██▄▄▄▀L2=86          █
- -40┤█▀     ▀▀L2=95    ▀  █ ▀▄ L4=0     -40┤█▀   ▀▀▀▀█▄▄▄▄▄▄▄▄▄▄▄█
- -60┤█      ▀▀    L3=78▀  █   ▀▄        -60┤█▀   ▀   ▀L3=76      █
-    │█      ▀▀         ▀  █     ▀▄         │█▀   ▀   ▀           ██ L4=0
- -80┤█      ▀▀         ▀  █       ▀▄▄   -80┤█▀   ▀   ▀           ██▄▄▄▄▄▄▄▄▄
-    └┴──────┴┴─────────┴──┴────────┴─      └┴┴───┴───┴───────────┴┴─────────
-       R1        R3          R4               R2  R3   sustain
-            R2         sustain              R1                   R4
-     0     2 s   4 s    6 s   8 s           0     2 s   4 s    6 s   8 s
+   0┤⠅  ⢀⡠⠔⠊⠑⠓⠒⠢⠤⠤⠤⣀⣀⣀ ⠁  ⠨               0┤⠅⠁L1=99  ⠁           ⠨
+ -20┤⠅ ⡔⠊  ⠈L1=99     ⠉⠉⠉⠉⠩⠢⡀           -20┤⢥⠣⠤⣀⡈ L2=86          ⠨
+ -40┤⢅⠎    ⠈ ⠁L2=95    ⠁  ⠨ ⠈⠢⡀         -40┤⡽⠁  ⠈⠉⠉⠒⠒⠓⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⢺
+ -60┤⡇     ⠈ ⠁    L3=78⠁  ⠨   ⠈⢢        -60┤⡇⠁  ⠈    ⠁L3=76      ⠨⡆
+    │⡇     ⠈ ⠁         ⠁  ⠨     ⠑⢄         │⡇⠁  ⠈    ⠁           ⠨⢣ L4=0
+ -80┤⡇     ⠈ ⠁         ⠁  ⠨       ⠑⢄⣀   -80┤⡇⠁  ⠈    ⠁           ⠨⠘⣄⣀⣀⣀⣀⣀⣀⣀⣀
+    └┴─────┴─┴─────────┴──┴────────┴─      └┴┴──┴────┴───────────┴─┴────────
+       R1        R3          R4              R2  R3    sustain
+           R2          sustain              R1                   R4
+     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
      ↑ note-on (key down)                   ↑ note-on (key down)
         note-off (key up) ↓                    note-off (key up) ↓
 OP3 carrier                            OP4 modulator d1
   dB                                     dB
-   0┤█  █▄▀L2=92     ▀    █               0┤█ L1=99              █
- -20┤█▄▀▀ ▀▀▀▀▀▀▄▄▄▄▄█▄▄▄▄█             -20┤█▀█▄▄▀L3=78          █
- -40┤█▀ ▀L1=99  L3=72▀    ██            -40┤█ ▀  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█▄
- -60┤█  ▀ ▀          ▀    █ ▀▄          -60┤█ ▀L2=88             ██
-    │█  ▀ ▀          ▀    █   █  L4=0      │█ ▀  ▀               █ █ L4=0
- -80┤█  ▀ ▀          ▀    █    ▀▄▄▄▄▄   -80┤█ ▀  ▀               █  █▄▄▄▄▄▄▄
+   0┤⠅ ⢀⠥⣀⡁ L2=92    ⠁    ⠨               0┤⠍ L1=99              ⠨
+ -20┤⠅⢠⠊⠁ ⠉⠉⠉⠑⠒⠒⠢⠤⠤⢄⣀⣁⣀⣀⣀⣀⣨             -20┤⢽⠒⠬⢄⣀⠈L3=78          ⠨
+ -40┤⢵⠁ ⠁L1=99  L3=72⠁    ⠨⠣⡀           -40┤⡏ ⠈  ⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠹⡄
+ -60┤⡇  ⠁ ⠁          ⠁    ⠨ ⠑⢄          -60┤⡏ ⠈L2=88             ⠨⢱
+    │⡇  ⠁ ⠁          ⠁    ⠨  ⠈⢢  L4=0      │⡏ ⠈  ⠈               ⠨ ⢇ L4=0
+ -80┤⡇  ⠁ ⠁          ⠁    ⠨    ⠑⣄⣀⣀⣀⣀   -80┤⡏ ⠈  ⠈               ⠨ ⠘⣄⣀⣀⣀⣀⣀⣀⣀
     └┴──┴─┴──────────┴────┴─────┴────      └┴─┴──┴───────────────┴──┴───────
      R1       R3            R4                R3     sustain     R4
         R2           sustain                R1 R2
-     0     2 s   4 s    6 s   8 s           0     2 s   4 s    6 s   8 s
+     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
      ↑ note-on (key down)                   ↑ note-on (key down)
         note-off (key up) ↓                    note-off (key up) ↓
 OP5 carrier                            OP6 modulator d1
   dB                                     dB
-   0┤█ ▀L1=99    ▀        █               0┤██   ▀L2=85▀L3=75    █
- -20┤█▄▀█▄▄      ▀L3=70   █             -20┤██▀▀▀█▄▄▄▄▄█▄▄▄▄▄▄▄▄▄█
- -40┤█▀▀▀  ▀▀▀▀▀▄█▄▄▄▄▄▄▄▄█             -40┤█▀L1=99    ▀         █▄
- -60┤█ ▀▀L2=90   ▀        █▀▄           -60┤█▀   ▀     ▀         ██
-    │█ ▀▀        ▀        █  █  L4=0       │█▀   ▀     ▀         █ █ L4=0
- -80┤█ ▀▀        ▀        █   ▀▄▄▄▄▄▄   -80┤█▀   ▀     ▀         █  █▄▄▄▄▄▄▄
-    └┴─┴┴────────┴────────┴────┴─────      └┴┴───┴─────┴─────────┴──┴───────
+   0┤⠅⠈L1=99     ⠁        ⠨               0┤⠅⣁⡀  ⠈L2=85⠁L3=75    ⠨
+ -20┤⠅⢸⠒⠥⣀⣀⡀     ⠁L3=70   ⠨             -20┤⢵⠁⠈⠉⠒⠚⠤⠤⠤⣀⣀⣁⣀⣀⣀⣀⣀⣀⣀⣀⣀⣨
+ -40┤⢵⠉ ⠁  ⠈⠉⠉⠒⠒⠤⠥⠤⠤⠤⠤⠤⠤⠤⠤⠬⡀            -40┤⡏⠁L1=99    ⠁         ⠨⡆
+ -60┤⡇⠈ ⠁L2=90   ⠁        ⠨⠑⡄           -60┤⡇⠁   ⠈     ⠁         ⠨⠱⡀
+    │⡇⠈ ⠁        ⠁        ⠨ ⠈⢢  L4=0       │⡇⠁   ⠈     ⠁         ⠨ ⢣ L4=0
+ -80┤⡇⠈ ⠁        ⠁        ⠨   ⠑⣄⣀⣀⣀⣀⣀   -80┤⡇⠁   ⠈     ⠁         ⠨ ⠈⣆⣀⣀⣀⣀⣀⣀⣀
+    └┴┴─┴────────┴────────┴────┴─────      └┴┴───┴─────┴─────────┴──┴───────
            R3     sustain  R4                 R2   R3   sustain  R4
      R1 R2                                  R1
-     0     2 s   4 s    6 s   8 s           0     2 s   4 s    6 s   8 s
+     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
      ↑ note-on (key down)                   ↑ note-on (key down)
         note-off (key up) ↓                    note-off (key up) ↓
 ```
@@ -416,30 +415,30 @@ The LFO has six shapes and two depths, and the voice stores three bits to pick t
 shape. The figure is the whole set on one grid, with the two depths of each:
 
 ```console
-$ dxconvey lfo waves --plot --no-table --wave all --glyphs block
+$ dxconvey lfo waves --plot --no-table --wave all
   0  triangle                            1  saw down
   mod                                    mod
-    1┤      ▄██            ██▄             1┤       ██▄▄           █▄▄
-  0.5┤    ▄█▀ ▀█▄        ▄█  ▀█          0.5┤       █  ▀█▄▄        █ ▀▀█▄
-    0┤   ▄█     ▀█▄    ▄█▀     █▄          0┤█▄▄    █     ▀▀▄▄     █    ▀▀▀
-      │ ▄█▀        █▄  ▄█        ▀█▄         │  ▀█▄▄ █        ▀▀█▄  █
-   -1┤█▀           ▀██▀           ▀█      -1┤     ▀▀█           ▀▀██
+    1┤      ⣠⠞⢦            ⡴⠳⣄             1┤       ⢸⠲⢄⡀           ⡟⠲⣄⡀
+  0.5┤    ⢀⡜⠁  ⠳⡄        ⢠⠞  ⠈⢣⡀         0.5┤       ⢸  ⠉⠳⢤⡀        ⡇  ⠙⠲⣄⡀
+    0┤   ⣠⠋     ⠈⢦⡀    ⢀⡴⠁     ⠙⣄          0┤⠤⣀     ⢸     ⠉⠓⢤⣀     ⡇     ⠉⠲
+      │ ⢀⠞⠁        ⠱⣄  ⣠⠎        ⠈⠳⡀         │ ⠈⠙⠦⣄  ⢸        ⠈⠓⢦⣀  ⡇
+   -1┤⡴⠋           ⠈⢦⡴⠁           ⠙⢦      -1┤    ⠈⠙⠦⣼           ⠈⠑⠦⡇
       └┬────────────────────────────┬        └┬────────────────────────────┬
   2  saw up                              3  square
   mod                                    mod
-    1┤     ▄▄█           ▄▄██              1┤▀▀▀▀▀▀▀█      █▀▀▀▀▀▀▀█      █
-  0.5┤  ▄█▀▀ █        ▄▄█▀  █            0.5┤       █      █       █      █
-    0┤▀▀▀    █     ▄█▀▀     █    ▄▄█       0┤       █      █       █      █
-      │       █  ▄█▀▀        █ ▄▄█▀          │       █      █       █      █
-   -1┤       ██▀▀           █▀▀           -1┤       █▄▄▄▄▄▄█       █▄▄▄▄▄▄█
+    1┤    ⢀⣠⠖⢻           ⢀⡠⠖⡇              1┤⠉⠉⠉⠉⠉⠉⠉⢹       ⡏⠉⠉⠉⠉⠉⠉⡇      ⢸
+  0.5┤ ⢀⣠⠖⠋  ⢸        ⢀⡤⠞⠉  ⡇            0.5┤       ⢸       ⡇      ⡇      ⢸
+    0┤⠖⠉     ⢸     ⣀⡤⠞⠉     ⡇     ⣀⠤       0┤       ⢸      ⢠⠃      ⡇      ⢸
+      │       ⢸  ⣀⡴⠚⠁        ⡇  ⣠⠴⠋⠁         │       ⢸      ⢸       ⡇      ⢸
+   -1┤       ⢸⠴⠊⠁           ⣧⠴⠋⠁          -1┤       ⢸⣀⣀⣀⣀⣀⣀⣸       ⣇⣀⣀⣀⣀⣀⣀⣸
       └┬────────────────────────────┬        └┬────────────────────────────┬
   4  sine                                5  sample&hold
   mod                                    mod
-    1┤  ▄█▀█▄         ▄█▀█▄                1┤
-  0.5┤ █▀   █▄       ▄█   ▀█             0.5┤
-    0┤▀▀     █▄     █▀     ▀█     ▄█       0┤▀▀▀▀▀▀▀▀▀▀▀▀▀▀█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-      │        █▄   █▀       ▀█   ▄█         │                             █
-   -1┤         ▀█▄█▀         ▀█▄█▀        -1┤
+    1┤ ⢀⡴⠋⠙⢦          ⢠⠞⠉⠑⢆                1┤
+  0.5┤⢀⠎    ⢳⡀       ⢠⠋   ⠈⢧             0.5┤
+    0┤⠎      ⢳⡀     ⢠⠇     ⠈⢧      ⡠       0┤⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠦⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
+      │        ⢳⡀   ⣠⠃       ⠈⢧    ⡰⠁        │                             ⢸
+   -1┤         ⠱⢄⣀⡴⠃          ⠳⣄⣠⠞⠁       -1┤                             ⠈
       └┬────────────────────────────┬        └┬────────────────────────────┬
   6 shapes · 359 ms across
 ```
@@ -451,26 +450,26 @@ seconds; the figure carries the note-on, the key-up and the sustain, and the tab
 under it gives every segment:
 
 ```console
-$ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot --glyphs block
+$ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
   dB
-   0┤█▀L1=99           ▀                                        █
-    │██ L2=85          ▀                                        █
-    │█▀▀▀▄▄▄           ▀                                        █
- -20┤█▀     ▀▀▄▄▄      ▀                                        █
-    │█▀          ▀▀▀▄▄ ▀L3=60                                   █
-    │█▀               ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█▄
-    │█▀                ▀                                        █ ▀▄
- -40┤█▀                ▀                                        █   █
-    │█▀                ▀                                        █    ▀▄
-    │█▀                ▀                                        █      ▀▄
- -60┤█▀                ▀                                        █        █
-    │█▀                ▀                                        █         ▀▄
-    │█▀                ▀                                        █           ▀▄
-    │█▀                ▀                                        █             █
- -80┤█▀                ▀                                        █              ▀▄
-    │█▀                ▀                                        █                ▀▄▄▄
-    └┴┴────────────────┴────────────────────────────────────────┴─────────────────┴──
-             R3                         sustain                         R4
+   0┤⣧⠁L1=99          ⠈                                         ⠨
+    │⡏⡇ L2=85         ⠈                                         ⠨
+    │⡇⠉⠉⠒⠤⢄⡀          ⠈                                         ⠨
+ -20┤⡇⠁    ⠈⠉⠒⠢⢄⣀     ⠈                                         ⠨
+    │⡇⠁          ⠉⠑⠢⠤⣀⡈ L3=60                                   ⠨
+    │⡇⠁               ⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠩⢢
+    │⡇⠁               ⠈                                         ⠨ ⠑⢄
+ -40┤⡇⠁               ⠈                                         ⠨   ⠣⡀
+    │⡇⠁               ⠈                                         ⠨    ⠈⢢
+    │⡇⠁               ⠈                                         ⠨      ⠑⢄
+ -60┤⡇⠁               ⠈                                         ⠨       ⠈⠢⡀
+    │⡇⠁               ⠈                                         ⠨         ⠈⢆
+    │⡇⠁               ⠈                                         ⠨           ⠑⢄
+    │⡇⠁               ⠈                                         ⠨            ⠈⠢⡀
+ -80┤⡇⠁               ⠈                                         ⠨              ⠈⢆
+    │⡇⠁               ⠈                                         ⠨                ⠑⣄⣀⣀
+    └┴┴───────────────┴─────────────────────────────────────────┴─────────────────┴──
+             R3                        sustain                          R4
      R1 R2
      0       0.5 s       1 s      1.5 s      2 s       2.5 s      3 s       3.5 s
      ↑ note-on (key down)                                       ↓ note-off (key up)
