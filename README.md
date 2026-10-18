@@ -80,7 +80,10 @@ the [DX7 collection page](https://solyaris.altervista.org/mesmerism.html).
 Buying the DX7II patch banks is a separate thing: those are sound files sold on
 the collection page, not funding for this software.
 
-For questions or corrections, contact **solyarismusic@gmail.com**.
+For questions or corrections, use [Discussions](https://github.com/solyarisoftware/dxconvey/discussions)
+— the **Q&A** category — or write to **solyarismusic@gmail.com**. Issues stay
+closed until there is code to run: until then a question about this
+repository belongs in Q&A, where the answer can be marked for the next reader.
 
 DX7, DX7II and TX802 are Yamaha trademarks. This project is not affiliated with
 Yamaha.
