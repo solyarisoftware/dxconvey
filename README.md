@@ -63,6 +63,23 @@ code release.
 The public repository is licensed under [MIT](LICENSE). That license applies to
 the project software, not to separately published sound files.
 
+## Supporting the work
+
+The tool is MIT-licensed and stays free. If you want to support the work
+around it — these pages, the notes on the instrument, the open-source
+tools — there is a donate button in the **Sponsor** menu of this repository:
+
+- **[Donate with PayPal](https://www.paypal.com/donate/?hosted_button_id=AEV3EVJEUFM32)**
+
+It is a donation, not a purchase: nothing is unlocked, nothing changes in the
+license, and no support is promised in exchange. The minimum is 5 EUR, for a
+practical reason — below that the PayPal fee takes most of it. The same button
+is on the [dxconvey page](https://solyaris.altervista.org/dxconvey.html) and on
+the [DX7 collection page](https://solyaris.altervista.org/mesmerism.html).
+
+Buying the DX7II patch banks is a separate thing: those are sound files sold on
+the collection page, not funding for this software.
+
 For questions or corrections, contact **solyarismusic@gmail.com**.
 
 DX7, DX7II and TX802 are Yamaha trademarks. This project is not affiliated with
