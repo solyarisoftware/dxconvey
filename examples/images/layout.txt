@@ -1,0 +1,10 @@
+$ dxconvey show layout alienazi.syx
+  alienazi.syx  ·  12,128 bytes  ·  DX7II All-Data dump
+
+  ┌──────────┬─────────┬──────────┬──────────┬─────────┬──────────┬─────────┐
+  │ DATA-CHG │ AMEM    │ VMEM     │ DATA-CHG │ AMEM    │ VMEM     │ PMEM    │
+  │ 7 B      │ 1,128 B │ 4,104 B  │ 7 B      │ 1,128 B │ 4,104 B  │ 1,650 B │
+  │ 19 4D 00 │ 32x35 B │ 32x128 B │ 19 4D 01 │ 32x35 B │ 32x128 B │ 32x51 B │
+  └──────────┴─────────┴──────────┴──────────┴─────────┴──────────┴─────────┘
+   @0         @7        @1,135     @5,239     @5,246    @6,374     @10,478
+  (AMEM and VMEM of a half hold the same 32 voice slots: the DX7 half and its DX7II supplement)

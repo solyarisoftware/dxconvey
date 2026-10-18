@@ -1,0 +1,39 @@
+$ dxconvey show performance alienazi.syx
+32 performances  ·  25 dual, 5 single, 2 split  ·  5 with an intonation
+1    PitecantropusErectus     dual    A  31 Orca Troia   alg 16  B  23 Carlo Levi   alg  6  detune 0
+2    Antropos spaces          dual    A   4 Pulsazioni   alg 21  B  34 soft wave    alg  5  detune 0
+3    sideral space bytes      split   A   7 SpacePig 2   alg 32  B  10 SpacePig 5   alg 32  split C4
+4    carnivori stupendi       dual    A  38 stupenda     alg  4  B  33 carnivori    alg  9  detune 6
+5    Particelle Subatomo      dual    A  21 Subatomo     alg 12  B  21 Subatomo     alg 12  detune 6
+6    Stati Alterati           dual    A  35 TIMEWARP     alg  5  B  35 TIMEWARP     alg  5  detune 7
+7    Random crazy sinfony     dual    A  20 PazzaOrch1   alg 12  B  22 PazzaOrch2   alg 12  detune 4
+     tuning 1/4 tone preset 10 · root G · voice B
+8    DeChiricoGialloeNero     dual    A  44 De Chirico   alg 20  B  13 Monique      alg  5  detune 0
+9    non morto non vivo       dual    A  64 OrzoWay      alg 10  B  60 scherzavo    alg  5  detune 0
+10   Apocalipse noise         single  A  59 apocalipse   alg 18  --
+11   Black woman walk         dual    A   4 Pulsazioni   alg 21  B  55 AcquAfrica   alg  5  detune 4
+12   voci dal sottosuolo      dual    A  36 GiorgiCoro   alg  5  B  40 DownLife     alg  3  detune 2
+13   Lamenti della Terra      dual    A  15 Laments 3    alg  3  B  14 Laments 2    alg  3  detune 2
+     tuning 1/4 tone preset 10 · root C · voices A+B
+14   choralarch Entropia      dual    A  57 choralarch   alg  5  B  36 GiorgiCoro   alg  5  detune 2
+15   extrasensorial act       dual    A  29 Sabato20     alg  4  B  54 Dedalo       alg 15  detune 0
+     tuning 1/4 tone preset 10 · root C · voices A+B
+16   nubivacche percosse      dual    A  17 NubiVacche   alg  5  B   1 Tabla-3      alg 10  detune 0
+17   Time Warp                dual    A  42 TimeWarp1    alg  5  B  42 TimeWarp1    alg  5  detune 0
+18   Nuvole serene            split   A  16 Nuvole 2     alg  5  B  63 Nuvole 3     alg  5  split C4
+     tuning 1/4 tone preset 10 · root C · voices A+B
+19   Incantata, non scema     single  A  28 Incatata     alg 25  --
+20   lieviottoni              single  A  49 lievottoni   alg  5  --
+21   architetti cosmici       single  A  57 choralarch   alg  5  --
+     tuning 1/4 tone preset 10 · root C · voice A
+22   Fabrizia a Framura       dual    A  13 Monique      alg  5  B   9 Framura84    alg  2  detune 0
+23   Tanganika Free           dual    A  55 AcquAfrica   alg  5  B  10 SpacePig 5   alg 32  detune 5
+24   sono solo insetti        dual    A  45 moschini     alg  5  B  43 Bordone..    alg 11  detune 5
+25   Enterprise Messages      dual    A  48 Mr. Spock    alg 16  B  10 SpacePig 5   alg 32  detune 3
+26   pesci del mar salato     dual    A  34 soft wave    alg  5  B   7 SpacePig 2   alg 32  detune 0
+27   Colossal sinphony        dual    A  31 Orca Troia   alg 16  B  61 Orca Vacca   alg 17  detune 3
+28   P. Gabriel cymbals       dual    A  51 CrashPiano   alg 12  B  36 GiorgiCoro   alg  5  detune 0
+29   Terzo mondo              dual    A  46 TerzoMondo   alg 21  B  46 TerzoMondo   alg 21  detune 1
+30   TESTOII by Tsukamoto     dual    A  11 OpenSpace    alg  5  B  37 ApiCattive   alg  1  detune 7
+31   Tsukamoto I              dual    A  56 B.Maderna    alg 17  B  52 FidatiDiMe   alg  2  detune 0
+32   Tsukamoto II             single  A  56 B.Maderna    alg 17  --

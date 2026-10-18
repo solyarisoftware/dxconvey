@@ -1,84 +1,94 @@
-$ dxconvey show voice example.syx --slot 1 --plots
-VOICE 1 · PAD 01
+$ dxconvey show voice alienazi.syx --slot 1 --plots
+VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
-SOUND TYPE pad · certain
-BEHAVIOUR  slow swell, harmonic, rich
-algorithm  5 · three 2-operator pairs
-carriers   OP1 OP3 OP5 · 3 of 6 reach the output
-feedback   OP6 on itself
-┌─────┐  ┌─────┐  ┌─────┐
-│ OP2 │  │ OP4 │  │ OP6 │◀─╮
-└──┬──┘  └──┬──┘  └──┬──┴──╯
-   │        │        │
-┌──▼──┐  ┌──▼──┐  ┌──▼──┐
-│ OP1 │  │ OP3 │  │ OP5 │
-└──┬──┘  └──┬──┘  └──┬──┘
-   └────────┼────────┘
-            ▼
-         OUTPUT
+SOUND TYPE percussion/drum · plausible
+BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
+algorithm  10 · a 3-operator stack with feedback plus two summed modulators
+carriers   OP1 OP4 · 2 of 6 reach the output
+feedback   OP3 on itself
+┌─────┐
+│ OP3 │◀─╮
+└──┬──┴──╯
+   │
+┌──▼──┐     ┌─────┐  ┌─────┐
+│ OP2 │     │ OP5 │  │ OP6 │
+└──┬──┘     └──┬──┘  └──┬──┘
+   │           ├────────┘
+┌──▼──┐     ┌──▼──┐
+│ OP1 │     │ OP4 │
+└──┬──┘     └──┬──┘
+   └─────┬─────┘
+         ▼
+      OUTPUT
 
-TOUCH      MIDI velocity OP2 OP4 OP6 KVS 3 (modulators brighter)
-timing     C4 · key up at 6.42 s, one second after the slowest carrier
+TOUCH      MIDI velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5
+           (modulators brighter), OP3 KVS 6 (modulators brighter)
+CONTROLS   mod wheel: EG bias 64
+CONTROLS   after touch: pitch 5, pitch bias 24
+timing     C4 · key up at 2.66 s, one second after the slowest carrier
            reaches its sustain level; programmed levels only, live
            velocity/controller offsets not applied
-carrier EG OP1 at C4: key up 6.42 s, time to silence 2.77 s
-carrier EG OP3 at C4: key up 6.42 s, time to silence 1.72 s
-carrier EG OP5 at C4: key up 6.42 s, time to silence 1.41 s
+carrier EG OP1 at C4: key up 2.66 s, does not reach silence
+carrier EG OP4 at C4: key up 2.66 s, silent at key up
 envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
 op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
-OP6  modulator d1   2.00   +0     85   3  40 30 25 50    99 85 75  0   0
-OP5  carrier        3.00   +0     75   0  32 35 28 45    99 90 70  0   0
-OP4  modulator d1   1.00   +0     78   3  45 35 30 50    99 88 78  0   0
-OP3  carrier        2.00   +0     88   0  30 32 26 45    99 92 72  0   0
-OP2  modulator d1   1.00   +0     72   3  38 30 28 55    99 86 76  0   0
-OP1  carrier        1.00   +0     99   0  28 30 24 42    99 95 78  0   0
+OP6  modulator d1   5.00   +4     66   0  69  0 49  0    99 11 96  0   0
+OP5  modulator d1   19Hz   -5     70   0  95 24 46  0    99 99 87  0   0
+OP4  carrier        5.00   +7     99   1  89 98 47 50    99 99  0  0   0
+OP3  modulator d2   4.00   -7     60   6  99 47 40 75    93 66  0  0   7
+OP2  modulator d1  257Hz   +0     96   5  75 14 69 35    99 99 91  0   2
+OP1  carrier      1.00Hz   -1     98   1  75 55 50 34    99 99 31 13   2
 
 volume     the amplitude envelope of the voice is that of OP1, the carrier
            that lives longest
-portability exact - no DX7II-only voice settings are set
+keyboard   rate scaling OP1 2, OP2 2, OP3 7. A scaled envelope runs faster
+           in the treble and slower in the bass, so the rates above are not
+           one time
+EG bias    mod wheel can offset the levels live: the table is the rest
+           position
+portability lossy - remapped AMS; 4 settings not in DX7 voice file (after
+            touch, mod wheel, pitch bend)
 
 figures    the six operator envelopes at C4, one figure each; the six
            figures share one time axis and one key-up, one second after the
            slowest carrier reaches its sustain level
 OP1 carrier                            OP2 modulator d1
   dB                                     dB
-   0┤⠅  ⢀⡠⠔⠊⠑⠓⠒⠢⠤⠤⠤⣀⣀⣀ ⠁  ⠨               0┤⠅⠁L1=99  ⠁           ⠨
- -20┤⠅ ⡔⠊  ⠈L1=99     ⠉⠉⠉⠉⠩⠢⡀           -20┤⢥⠣⠤⣀⡈ L2=86          ⠨
- -40┤⢅⠎    ⠈ ⠁L2=95    ⠁  ⠨ ⠈⠢⡀         -40┤⡽⠁  ⠈⠉⠉⠒⠒⠓⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⢺
- -60┤⡇     ⠈ ⠁    L3=78⠁  ⠨   ⠈⢢        -60┤⡇⠁  ⠈    ⠁L3=76      ⠨⡆
-    │⡇     ⠈ ⠁         ⠁  ⠨     ⠑⢄         │⡇⠁  ⠈    ⠁           ⠨⢣ L4=0
- -80┤⡇     ⠈ ⠁         ⠁  ⠨       ⠑⢄⣀   -80┤⡇⠁  ⠈    ⠁           ⠨⠘⣄⣀⣀⣀⣀⣀⣀⣀⣀
-    └┴─────┴─┴─────────┴──┴────────┴─      └┴┴──┴────┴───────────┴─┴────────
-       R1        R3          R4              R2  R3    sustain
-           R2          sustain              R1                   R4
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
+   0┤⡯                                    0┤⣯
+ -20┤⡯ L1=99                            -20┤⣿ L1=99
+ -40┤⡯ L3=31                            -40┤⣿ L3=91
+ -60┤⣿                                  -60┤⣿
+    │⡿⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤      │⣿ L4=0
+ -80┤⡯                                  -80┤⣿⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀
+    └┴───────────────────────────────      └┴───────────────────────────────
+     R1 R2 R3 sustain R4                    R1 R2 R3 sustain R4
+     0   1:00  2:00   3:00  4:00            0   1:00  2:00   3:00  4:00
      ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
-OP3 carrier                            OP4 modulator d1
+     ↓ note-off (key up)                    ↓ note-off (key up)
+OP3 modulator d2                       OP4 carrier
   dB                                     dB
-   0┤⠅ ⢀⠥⣀⡁ L2=92    ⠁    ⠨               0┤⠍ L1=99              ⠨
- -20┤⠅⢠⠊⠁ ⠉⠉⠉⠑⠒⠒⠢⠤⠤⢄⣀⣁⣀⣀⣀⣀⣨             -20┤⢽⠒⠬⢄⣀⠈L3=78          ⠨
- -40┤⢵⠁ ⠁L1=99  L3=72⠁    ⠨⠣⡀           -40┤⡏ ⠈  ⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠹⡄
- -60┤⡇  ⠁ ⠁          ⠁    ⠨ ⠑⢄          -60┤⡏ ⠈L2=88             ⠨⢱
-    │⡇  ⠁ ⠁          ⠁    ⠨  ⠈⢢  L4=0      │⡏ ⠈  ⠈               ⠨ ⢇ L4=0
- -80┤⡇  ⠁ ⠁          ⠁    ⠨    ⠑⣄⣀⣀⣀⣀   -80┤⡏ ⠈  ⠈               ⠨ ⠘⣄⣀⣀⣀⣀⣀⣀⣀
-    └┴──┴─┴──────────┴────┴─────┴────      └┴─┴──┴───────────────┴──┴───────
-     R1       R3            R4                R3     sustain     R4
-        R2           sustain                R1 R2
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
+   0┤⠭                                    0┤⡯
+ -20┤⠭ L1=93                            -20┤⡯ L1=99
+ -40┤⡯ L2=66                            -40┤⡯
+ -60┤⡯                                  -60┤⡯
+    │⡯ L3=0                                │⡯ L3=0
+ -80┤⣯⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   -80┤⣯⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀
+    └┴───────────────────────────────      └┴───────────────────────────────
+     R1 R2 R3 sustain R4                    R1 R2 R3 sustain R4
+     0   1:00  2:00   3:00  4:00            0   1:00  2:00   3:00  4:00
      ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
-OP5 carrier                            OP6 modulator d1
+     ↓ note-off (key up)                    ↓ note-off (key up)
+OP5 modulator d1                       OP6 modulator d1
   dB                                     dB
-   0┤⠅⠈L1=99     ⠁        ⠨               0┤⠅⣁⡀  ⠈L2=85⠁L3=75    ⠨
- -20┤⠅⢸⠒⠥⣀⣀⡀     ⠁L3=70   ⠨             -20┤⢵⠁⠈⠉⠒⠚⠤⠤⠤⣀⣀⣁⣀⣀⣀⣀⣀⣀⣀⣀⣀⣨
- -40┤⢵⠉ ⠁  ⠈⠉⠉⠒⠒⠤⠥⠤⠤⠤⠤⠤⠤⠤⠤⠬⡀            -40┤⡏⠁L1=99    ⠁         ⠨⡆
- -60┤⡇⠈ ⠁L2=90   ⠁        ⠨⠑⡄           -60┤⡇⠁   ⠈     ⠁         ⠨⠱⡀
-    │⡇⠈ ⠁        ⠁        ⠨ ⠈⢢  L4=0       │⡇⠁   ⠈     ⠁         ⠨ ⢣ L4=0
- -80┤⡇⠈ ⠁        ⠁        ⠨   ⠑⣄⣀⣀⣀⣀⣀   -80┤⡇⠁   ⠈     ⠁         ⠨ ⠈⣆⣀⣀⣀⣀⣀⣀⣀
-    └┴┴─┴────────┴────────┴────┴─────      └┴┴───┴─────┴─────────┴──┴───────
-           R3     sustain  R4                 R2   R3   sustain  R4
-     R1 R2                                  R1
-     0    2 s    4 s    6 s   8 s           0    2 s    4 s    6 s   8 s
+   0┤⠭ L1=99                              0┤⠭ L1=99
+ -20┤⡭ L3=87                            -20┤⣭⣀
+ -40┤⡯⠑⠒⠤⢄⣀                             -40┤⡯ ⠉⠑⠒⠤⢄⡀
+ -60┤⡯     ⠉⠒⠢⠤⣀⡀                       -60┤⡯      ⠈⠉⠒⠢⠤⣀⡀
+    │⡯          ⠈⠉⠒⠢⠤⣀⡀     L4=0           │⡯ L2=11      ⠈⠉⠒⠢⠤⣀⡀     L4=0
+ -80┤⡯                ⠈⠉⠒⠢⠤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   -80┤⡯                  ⠈⠉⠒⠢⠤⣀⣀⣀⣀⣀⣀⣀⣀
+    └┴─────────────────────┴─────────      └┴───────────────────────┴───────
+               R4                                      R4
+     R1 R2 R3 sustain                       R1 R2
+     0   1:00  2:00   3:00  4:00            0   1:00  2:00   3:00  4:00
      ↑ note-on (key down)                   ↑ note-on (key down)
-        note-off (key up) ↓                    note-off (key up) ↓
+     ↓ note-off (key up)                    ↓ note-off (key up)

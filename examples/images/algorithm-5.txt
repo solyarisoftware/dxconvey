@@ -1,0 +1,41 @@
+$ dxconvey algorithm 5
+  algorithm 5  ·  three 2-operator pairs
+    carriers    OP1 OP3 OP5
+    modulators  OP2 → OP1 · OP4 → OP3 · OP6 → OP5
+    feedback    OP6 on itself
+    structure   3 stacks of 2: OP2 → OP1, OP4 → OP3, OP6 → OP5
+
+    ┌─────┐  ┌─────┐  ┌─────┐
+    │ OP2 │  │ OP4 │  │ OP6 │◀─╮
+    └──┬──┘  └──┬──┘  └──┬──┴──╯
+       │        │        │
+    ┌──▼──┐  ┌──▼──┐  ┌──▼──┐
+    │ OP1 │  │ OP3 │  │ OP5 │
+    └──┬──┘  └──┬──┘  └──┬──┘
+       └────────┼────────┘
+                ▼
+             OUTPUT
+
+    how it sounds
+      Three independent pairs, each a modulator onto its own carrier. Nothing is shared, so the
+      result is close to additive synthesis with three coloured partials: each pair can be tuned to
+      its own ratio and given its own envelope, and the feedback on OP6 makes the third pair the
+      'sawtooth' one. It is the most used and the most forgiving algorithm of the DX7: almost any
+      harmonic recipe can be built here, and one pair can be left as a pure sine for the
+      fundamental.
+
+    typical sounds
+      · organs and flutes with several registrations
+      · tubular bells, glockenspiel, celesta: the factory ORCH-CHIME and TUB BELLS use it
+      · electric piano: the factory E.PIANO 1 is this algorithm with the third pair at ratio 14.00
+        for the tine and the other two at 1.00
+      · two- and three-part additive pads, choirs
+
+    programming it
+      Set the pairs to harmonic ratios of the fundamental (1, 2, 3, 4, 6, 8) and shape them with
+      their own envelopes; OP2, OP4, OP6 control the brightness of their own pair only. Feedback on
+      OP6 turns that pair into a near-sawtooth, which is the fastest route to a rich 'analogue'
+      sound on the DX7.
+
+    note
+      The DX9 (4 operators) borrowed this one as its algorithm 5.
