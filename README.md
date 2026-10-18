@@ -65,11 +65,8 @@ fail. The text of the same run is in `examples/figures/`.
 One line per question: what the file is, what it holds, and what a DX7
 would lose.
 
-```bash
+```console
 $ dxconvey show summary example.syx
-```
-
-```text
 example.syx  --  12,128 bytes
   DX7II All-Data dump
   contents: 64 voices (2 banks), each a DX7 voice plus its DX7II supplement, 1 performance bank (32)
@@ -86,11 +83,8 @@ example.syx  --  12,128 bytes
 Every SysEx message of the file is a box: the block's own name, its size, and the
 offset where it starts.
 
-```bash
+```console
 $ dxconvey show layout example.syx
-```
-
-```text
   example.syx  ·  12,128 bytes  ·  DX7II All-Data dump
 
   ┌──────────┬─────────┬──────────┬──────────┬─────────┬──────────┬─────────┐
@@ -104,14 +98,12 @@ $ dxconvey show layout example.syx
 
 ### A voice, in full
 
-One voice is six operators. The sheet gives the routing, what a DX7 keeps, the
-timing of the key-up, and the four rates and four levels of every operator:
+One voice is six operators. The sheet says what kind of sound it is and how it
+behaves, gives the routing, what a DX7 keeps, the timing of the key-up, and the
+four rates and four levels of every operator:
 
-```bash
+```console
 $ dxconvey show voice example.syx --slot 1 --plots
-```
-
-```text
 VOICE 1 · PAD 01
 ────────────────────────────────────────────────────────────────────
 SOUND TYPE pad · certain
@@ -162,11 +154,8 @@ share one time axis and one key-up, because that is how one voice is played:
 A performance is a pointer: two voices, a key mode, a split point, a tuning. One line
 each, and the first line counts what the bank holds.
 
-```bash
+```console
 $ dxconvey show performance example.syx
-```
-
-```text
 32 performances  ·  11 dual, 10 single, 11 split
 1    PAIR 01                  dual    A   1 PAD 01       alg  5  B   2 BELL 02      alg  1  detune 3
 2    SPLIT 02                 split   A   3 ORGAN 03     alg 32  B   4 BRASS 04     alg 22  split C4
@@ -202,16 +191,128 @@ $ dxconvey show performance example.syx
 32   SPLIT 32                 split   A  63 ORGAN 63     alg 32  B  64 BRASS 64     alg 22  split C4
 ```
 
+### A performance, drawn
+
+`--sheet` stops pointing and draws: which voice plays which keys, the sound of each
+in words, the panning, the polyphony, the tuning, the switches — and the algorithm of
+each voice as a block diagram. This one is a split, so the keyboard is drawn too.
+
+```console
+$ dxconvey show performance example.syx --slot 2 --sheet
+PERFORMANCE 2 · SPLIT 02
+LAYOUT     split at C4 · Voice A below · Voice B from C4 up
+SOUND A    organ · certain
+SOUND B    brass · certain
+BEHAVIOUR  A: held note, short tail, harmonic, dense, no velocity
+           B: held note, harmonic, dark, two layers, closing
+voice A     3 ORGAN 03             algorithm 32  OP6 on itself
+voice B     4 BRASS 04             algorithm 22  OP6 on itself
+MIDI response B velocity OP6 KVS 5 (modulators brighter)
+MIDI response B mod wheel: EG bias 64
+timing     each voice's key comes up one second after its slowest carrier
+           reaches its sustain level; programmed levels only, live
+           velocity/controller offsets not applied
+timing A   OP1 at C3: key up 1.00 s, time to silence 45 ms
+timing A   OP2 at C3: key up 1.00 s, time to silence 40 ms
+timing A   OP3 at C3: key up 1.00 s, time to silence 37 ms
+timing A   OP4 at C3: key up 1.00 s, time to silence 34 ms
+timing A   OP5 at C3: key up 1.00 s, time to silence 31 ms
+timing A   OP6 at C3: key up 1.00 s, time to silence 28 ms
+timing B   OP1 at C5: key up 4.62 s, silent at key up
+timing B   OP3 at C5: key up 4.62 s, time to silence 344 ms
+timing B   OP4 at C5: key up 4.62 s, silent at key up
+timing B   OP5 at C5: key up 4.62 s, time to silence 515 ms
+settings   balance +6 · split C4 · shift +0/+0
+stored     inactive here: dual detune 3
+volume     total 0
+sliders    neither slider is assigned
+switches   EG forced damping off · sustain foot switch none · foot switch
+           sustain none · soft pedal range 0
+polyphony  16 notes · 8 + 8, at most 8 per side · 2 + 2 in unison poly
+pan        mix · voices combined, moves the mix · control off
+tuning     equal temperament preset 1 (the DX7II default)
+unison     A 0 · B 3 (unison detune depth, needs a unison key mode)
+keys       61 keys, C2 to C7, one column per semitone
+           C2          C3          C4          C5          C6         C7
+           ████████████████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+                                   ▲ split at C4
+
+pan EG     flat: levels 0/0/0/0, off centre (nothing moves)
+
+algorithms A six carriers, no modulation
+           B one modulator shared by three carriers
+
+           A · ORGAN 03 · algorithm 32
+           ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐
+           │ OP1 │  │ OP2 │  │ OP3 │  │ OP4 │  │ OP5 │  │ OP6 │◀─╮
+           └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┴──╯
+              └────────┴────────┴───┬────┴────────┴────────┘
+                                    ▼
+                                 OUTPUT
+
+           B · BRASS 04 · algorithm 22
+           ┌─────┐           ┌─────┐
+           │ OP2 │           │ OP6 │◀─╮
+           └──┬──┘           └──┬──┴──╯
+              │        ┌────────┼───────────┐
+           ┌──▼──┐  ┌──▼──┐  ┌──▼──┐     ┌──▼──┐
+           │ OP1 │  │ OP3 │  │ OP4 │     │ OP5 │
+           └──┬──┘  └──┬──┘  └──┬──┘     └──┬──┘
+              └────────┴─────┬──┴───────────┘
+                             ▼
+                          OUTPUT
+```
+
+### A performance, read
+
+`--describe` says what it sounds like instead of drawing it: the tag of each voice
+and how sure it is, one phrase of behaviour, and the bytes behind every axis of that
+answer — the envelope, the spectrum, the density, the timbre path, the feedback, the
+touch — with what the file cannot say.
+
+```console
+$ dxconvey show performance example.syx --slot 1 --describe
+PERFORMANCE 1 · PAIR 01
+
+layout     two voices on every key: PAD 01 and BELL 02, 3 units apart in
+           pitch so they beat
+voice A    pad · certain
+           slow swell, harmonic, rich
+voice B    bell · plausible
+           instant hit, short tail, harmonic, very bright, two layers
+why A      the envelope: attack slow (carrier R1 28 of 99), body swell, a
+           slow attack that settles into the level (L3 78 of 99), release
+           medium (R4 42, L4 0).
+           the spectrum: carriers at 3.00, 2.00, 1.00 times the key. The
+           highest modulator reaches 2.00 times the key, so balanced.
+           the density: rich, 3 carriers (OP5, OP3, OP1) and 3 modulators.
+           the timbre path: static, the modulators ending at L3 75 against
+           the carriers' 70.
+           the feedback: strong (4 of 7), the layering layered.
+           the touch: velocity.
+why B      the envelope: attack instant (carrier R1 99 of 99), body one_shot
+           (L3 0 of 99), release short (R4 62, L4 0).
+           the spectrum: carriers at 1.00 times the key. The highest
+           modulator reaches 14.00 times the key, so very bright.
+           the density: pair, 2 carriers (OP3, OP1) and 4 modulators.
+           the timbre path: static, the modulators ending at L3 50 against
+           the carriers' 0.
+           the feedback: strong (6 of 7), the layering single.
+           the touch: nothing follows the velocity or a controller.
+note       what this cannot say: what a controller's EG bias is worth in
+           level steps (not measured), how bright it is in dB (no
+           level-to-dB curve), or how it really sounds (no recording was
+           heard).  Brightness and density are proxies of the parameters,
+           not measurements.
+```
+
 ### The conversion, and its bill
 
 Two banks land next to the dump, each with the register that names, voice by voice,
 what a DX7 keeps and what it does not.
 
-```bash
+```console
 $ dxconvey convert example.syx -o out/
-```
-
-```text
 CONVERT  example.syx → out
   2 banks · 64 voices · 16 exact, 32 close, 16 lossy
   pitch EG proportional · 50, 25, 6.25, 3.125
@@ -225,11 +326,8 @@ CONVERT  example.syx → out
 The 32 algorithms are the same on every six-operator machine. `algorithm` draws one,
 names its carriers and its feedback, and tells how it sounds and how to program it.
 
-```bash
+```console
 $ dxconvey algorithm 5
-```
-
-```text
   algorithm 5  ·  three 2-operator pairs
     carriers    OP1 OP3 OP5
     modulators  OP2 → OP1 · OP4 → OP3 · OP6 → OP5
@@ -277,7 +375,7 @@ $ dxconvey algorithm 5
 The LFO has six shapes and two depths, and the voice stores three bits to pick the
 shape. The figure is the whole set on one grid, with the two depths of each:
 
-```bash
+```console
 $ dxconvey lfo waves --plot --no-table --wave all
 ```
 
@@ -288,7 +386,7 @@ $ dxconvey lfo waves --plot --no-table --wave all
 Four rates and four levels are all a DX7 envelope is. The model turns them into
 seconds, and the figure carries the note-on, the key-up and the sustain:
 
-```bash
+```console
 $ dxconvey envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
 ```
 
