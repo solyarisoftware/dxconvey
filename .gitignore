@@ -25,6 +25,10 @@ out/
 
 # SysEx data is not part of this project: see "What this project is not" in the
 # README. This line is a safeguard, not a policy statement — dumps of other
-# people's patches must never land here by accident. An example dump, if one is
-# ever published, would be exempted explicitly (for instance `!examples/*.syx`).
+# people's patches must never land here by accident. One exception, and it is the
+# whole point of it: `examples/example.syx` is a synthetic dump written by
+# `examples/make_example.py` beside it, with names that belong to nobody, so the
+# captures in the README can be run again. An exemption for anything else would
+# need the generator that reproduces it byte for byte.
 *.syx
+!examples/*.syx
