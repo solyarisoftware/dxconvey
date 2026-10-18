@@ -1,0 +1,15 @@
+# Funding links for this repository: they feed the "Sponsor" button in the
+# repository header. GitHub reads this file from the default branch only, and
+# accepts up to four `custom` URLs.
+#
+# House rule: only funding links belong here (GitHub: no advertising, no
+# political/community/charity groups). The store of the DX7II banks is not a
+# funding link and does not go in this file.
+#
+# PayPal "Donate" hosted button, EUR, minimum 5. Its campaign title reads
+# "Keeping the DX7II pages free: notes, playing tips, open-source tools.
+# A donation, not a purchase." — funding the open-source work, which is what
+# GitHub allows. Canonical form of the URL, with the button ID PayPal issued:
+# the `?token=` variant is a session handle and can expire.
+# Same button as the one linked from https://solyaris.altervista.org/dxconvey.html
+custom: ["https://www.paypal.com/donate/?hosted_button_id=AEV3EVJEUFM32"]
