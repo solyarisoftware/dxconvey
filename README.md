@@ -263,6 +263,89 @@ portability lossy - remapped AMS; 4 settings not in DX7 voice file (after
             touch, mod wheel, pitch bend)
 ```
 
+### What a sound is called
+
+A voice carries no word for what it is, so the tool says what it **imitates**: one
+of seventeen tags, from `piano` to `synth`, never a claim about the sound itself.
+Beside the tag it writes one phrase of **behaviour**, and that phrase is not an
+opinion either — it is computed from the bytes on fourteen axes (attack, body,
+release, spectrum, brightness, density, lfo_motion, pitch_arc, lfo_shape,
+lfo_arrival, feedback, timbre, layering, touch), each a threshold over the
+operators, the envelopes, the ratios and the DX7II supplement. No model, no
+network, no listening: the same file gives the same phrase every time.
+
+The order is the argument. **The bytes** give the axes; **the axes** give the
+behaviour; **the phrase and the name of the voice** together give the tag — the name
+may confirm the reading the bytes allow, or pick another one, but it never decides
+against them. The confidence line says who decided: `certain`, `plausible`,
+`name-only`, or `-` for a slot that still holds the factory voice, which has no
+sound type at all and prints a dash. `dxconvey -q instrument description` lists the
+seventeen, one per line; without `-q` the same command prints the definition of
+each one, the fourteen axes and the four bands of every sentence:
+
+```console
+$ dxconvey -q instrument description
+piano
+keys
+organ
+bell
+mallet
+percussion
+pluck
+bass
+strings
+brass
+reed
+pipe
+voice
+lead
+pad
+fx
+synth
+```
+
+### Searching by the tag
+
+Because the tag is a value and not a sentence, it can be searched: `--type` takes one
+of the seventeen names, case insensitive, and can be repeated. A word that is not a
+tag is refused (exit 2, with the page that lists them), and a tag that no voice of
+this dump carries answers that there is no match (exit 1) — a filter that matched
+nothing is a fact, not an error. The row after the name is the tag it matched.
+
+`--describe` on a voice says which byte is behind every adjective, one group at a
+time; here the filters are enough to count what a bank holds:
+
+```console
+$ dxconvey -q show voice alienazi.syx --type bell
+2   Respiri          bell        alg 11  carriers 2  R4 20 (OP4)  on a DX7: lossy
+4   Pulsazioni       bell        alg 21  carriers 4  R4 18 (OP5)  on a DX7: lossy
+5   Alien2000        bell        alg 11  carriers 2  R4 22 (OP4)  on a DX7: lossy
+6   SpacePig 3       bell        alg 32  carriers 6  R4 25 (OP1)  on a DX7: lossy
+11  OpenSpace        bell        alg  5  carriers 3  R4 23 (OP1)  on a DX7: lossy
+13  Monique          bell        alg  5  carriers 3  R4 35 (OP5)  on a DX7: lossy
+17  NubiVacche       bell        alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
+18  Gare 2000        bell        alg 17  carriers 1  R4 20 (OP1)  on a DX7: lossy
+19  BlackNoise       bell        alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
+20  PazzaOrch1       bell        alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
+21  Subatomo         bell        alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
+22  PazzaOrch2       bell        alg 12  carriers 2  R4 10 (OP3)  on a DX7: lossy
+26  RadioBot         bell        alg  5  carriers 3  R4 32 (OP5)  on a DX7: lossy
+27  Penombra         bell        alg  5  carriers 3  R4  8 (OP1)  on a DX7: lossy
+28  Incatata         bell        alg 25  carriers 5  R4  0 (OP1)  on a DX7: lossy
+29  Sabato20         bell        alg  4  carriers 2  R4 17 (OP1)  on a DX7: lossy
+30  VentiLenti       bell        alg  6  carriers 3  R4 27 (OP5)  on a DX7: lossy
+32  reversNois       bell        alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
+33  carnivori        bell        alg  9  carriers 2  R4  8 (OP3)  on a DX7: lossy
+36  GiorgiCoro       bell        alg  5  carriers 3  R4 30 (OP1)  on a DX7: lossy
+40  DownLife         bell        alg  3  carriers 2  R4  0 (OP4)  on a DX7: lossy
+44  De Chirico       bell        alg 20  carriers 3  R4 24 (OP4)  on a DX7: lossy
+45  moschini         bell        alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
+49  lievottoni       bell        alg  5  carriers 3  R4  0 (OP1)  on a DX7: lossy
+54  Dedalo           bell        alg 15  carriers 2  R4  8 (OP1)  on a DX7: lossy
+57  choralarch       bell        alg  5  carriers 3  R4 11 (OP1)  on a DX7: lossy
+60  scherzavo        bell        alg  5  carriers 3  R4  7 (OP1)  on a DX7: lossy
+```
+
 ### The performances
 
 A performance is a pointer: two voices, a key mode, a split point, a tuning. One line
