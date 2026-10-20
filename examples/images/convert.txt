@@ -1,7 +1,0 @@
-$ dxconvey convert alienazi.syx -o out/
-CONVERT  alienazi.syx → out
-  2 banks · 64 voices · 9 exact, 1 close, 54 lossy
-  pitch EG proportional · 50, 25, 6.25, 3.125
-
-  alienazi_1-32.syx   32 voices · slots 1-32 · the register: alienazi_1-32.txt
-  alienazi_33-64.syx  32 voices · slots 33-64 · the register: alienazi_33-64.txt
