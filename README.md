@@ -144,10 +144,15 @@ DX7II All-Data of the package published here
 the downloadable package was built from, so every answer below is about a file the
 reader can hold.
 
-A figure such as an envelope is drawn with the Braille patterns
-(`U+2800`–`U+28FF`, a 2×4 dot grid per character cell): it lines up in any monospaced
-font that has them, and looks like a row of boxes in one that does not. A terminal is
-where they were made.
+**A figure is drawn so that it reads on a page.** The tool's default alphabet for a
+curve is the Braille patterns (`U+2800`–`U+28FF`, a 2×4 dot grid per character cell), the
+finest grid a terminal can hold — and one a code block here would show as a row of boxes,
+because a page cannot be told which font to use and the code font of a Windows browser has
+none. Every run below that draws therefore asks for `--glyphs dot`: three thin marks per
+cell, made of the punctuation and the box drawing the tables already use, so the figure
+survives any font. In a terminal the default stays finer — `dxconvey instrument envelope
+--plot` — and `--glyphs block`, a half block per cell, is the third alphabet, for a font
+that has the block elements and not the dots.
 
 ### The dump, at a glance
 
@@ -611,7 +616,7 @@ at the left edge and the key-up is the dashed column, and a curve with a `▸` i
 there because its release outlasts the voice — OP5 rings for three minutes.
 
 ```console
-$ dxconvey show voice alienazi.syx --slot 1 --plots
+$ dxconvey show voice alienazi.syx --slot 1 --plots --glyphs dot
 VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
 SOUND TYPE percussion/drum · plausible
@@ -667,38 +672,38 @@ figures    the six operator envelopes at C4, one figure each; the six
            slowest carrier reaches its sustain level
 OP1 carrier                                         OP2 modulator d1
   dB
-   0┤⡷⡀                              ⠅               │⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅
- -20┤⡇⠑⡄                             ⠅               │⡇ L1=99                         ⠅⠉⠑⠒⠤⢄⣀⡀
-    │⡇ ⠘⡄                            ⠅               │⡇ L3=91                         ⠅      ⠈⠉⠒⠢⠤▸
- -40┤⡇  ⠘⢄ L3=31                     ⠅               │⡇                               ⠅
-    │⡇   ⠈⠦⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠥⢄⣀⡀            │⡇                               ⠅
- -60┤⡇                               ⠅  ⠈⠉⠑⠒⠢⠤⢄⣀     │⡇                               ⠅
-    │⡇                               ⠅          ⠉⠉   │⡇                               ⠅
- -80┤⡇                               ⠅               │⡇                               ⠅
+   0┤..                              -               │.................................
+ -20┤.'.                             -               │. L1=99                         -''--..
+    │. '.                            -               │. L3=91                         -      ''--.▸
+ -40┤.  '. L3=31                     -               │.                               -
+    │.    ----------------------------..             │.                               -
+ -60┤.                               -  '''---..     │.                               -
+ -80┤.                               -          ''   │.                               -
+    │.                               -               │.                               -
     └┴────┴──────────────────────────┴──────────┴─   └┴───────────────────────────────┴───────────┴
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
 OP3 modulator d2                                    OP4 carrier
   dB
-   0┤                                ⠅               │⡗⠤⡀                             ⠅
- -20┤                                ⠅               │⡇ ⠈⠒⢄                           ⠅
-    │ L1=93                          ⠅               │⡇    ⠉⠢⡀                        ⠅
- -40┤⣇ L2=66                         ⠅               │⡇      ⠈⠑⢄⡀                     ⠅
-    │⡿⡀                              ⠅               │⡇         ⠈⠢⣀                   ⠅
- -60┤⡇⠱⡀                             ⠅               │⡇            ⠑⠤⡀                ⠅
-    │⡇ ⠱⡀ L3=0                       ⠅               │⡇              ⠈⠒⢄   L3=0       ⠅
- -80┤⡇  ⢣⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   │⡇                 ⠑⠢⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀
-    └┴──┴────────────────────────────┴────────────   └┴───────────────────┴───────────┴────────────
+   0┤                                -               │.-.                             -
+ -20┤                                -               │.  '.                           -
+    │ L1=93                          -               │.    '-.                        -
+ -40┤. L2=66                         -               │. L1=99 '-.                     -
+    │..                              -               │.         '-.                   -
+ -60┤.'.                             -               │.            '-.                -
+ -80┤. -. L3=0                       -               │.               -.   L3=0       -
+    │.  '.........................................   │.                 '-.........................
+    └┴┴──┴───────────────────────────┴────────────   └┴───────────────────┴───────────┴────────────
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
 OP5 modulator d1                                    OP6 modulator d1
   dB
-   0┤                                ⠅               │                                ⠅
- -20┤ L1=99                          ⠅               │ L1=99                          ⠅ L2=11
-    │⡏⠒⢄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀▸   │⡖⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠗⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒▸
- -40┤⡇  L3=87                        ⠅               │⡇                               ⠅
-    │⡇                               ⠅               │⡇                               ⠅
- -60┤⡇                               ⠅               │⡇                               ⠅
-    │⡇                               ⠅               │⡇                               ⠅
- -80┤⡇                               ⠅               │⡇                               ⠅
+   0┤                                -               │                                -
+ -20┤ L1=99                          -               │ L1=99                          - L2=11
+    │.-..........................................▸   │.''''''''''''''''''''''''-------------------▸
+ -40┤.  L3=87                        -               │.                               -
+    │.                               -               │.                               -
+ -60┤.                               -               │.                               -
+ -80┤.                               -               │.                               -
+    │.                               -               │.                               -
     └┴─┴─────────────────────────────┴───────────┴   └┴───────────────────────────────┴───────────┴
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
 
@@ -758,74 +763,49 @@ $ dxconvey show performance alienazi.syx
 
 `--sheet` stops pointing and draws: which voice plays which keys, the sound of each
 in words, the panning, the polyphony, the tuning, the switches — and the algorithm of
-each voice as a block diagram.  This one, the second performance of `alienazi.syx`,
-is a split, so the keyboard is drawn too.
+each voice as a block diagram.  This one, the eighteenth performance of
+`alienazi.syx`, is a split, so the keyboard is drawn too, band by band.
 
 ```console
-$ dxconvey show performance alienazi.syx --slot 2 --sheet
-PERFORMANCE 2 · Antropos spaces
-LAYOUT     dual · Voice A and Voice B together across the keyboard
-SOUND A    bell · plausible
-SOUND B    strings · digital · plausible
-BEHAVIOUR  A: slow swell, long tail, inharmonic, bright, rich, opening
-           B: slow swell, long tail, harmonic, dark, rich, opening
-voice A     4 Pulsazioni           algorithm 21  OP3 on itself
-voice B    34 soft wave            algorithm  5  OP6 on itself
-MIDI response A velocity OP4 KVS 1 (carriers louder), OP5 KVS 3 (carriers
-              louder), OP6 KVS 7 (modulators brighter)
-MIDI response A mod wheel: pitch 51, amplitude 45, EG bias 61
-MIDI response A after touch: pitch 84, amplitude 88, EG bias 88, pitch bias
-              51
-MIDI response B mod wheel: pitch 1, amplitude 82, EG bias 24
-MIDI response B after touch: pitch 2, amplitude 48, EG bias 20
+$ dxconvey show performance alienazi.syx --slot 18 --sheet
+PERFORMANCE 18 · Nuvole serene
+LAYOUT     split at C4 · Voice A below · Voice B from C4 up
+SOUND A    strings · plausible
+SOUND B    strings · plausible
+BEHAVIOUR  A: slow swell, no end, harmonic, dark, rich, drift, pitch gliding
+           B: slow swell, no end, harmonic, dark, rich, drift, no velocity
+voice A    16 Nuvole 2             algorithm  5  OP6 on itself
+voice B    63 Nuvole 3             algorithm  5  OP6 on itself
+MIDI response A mod wheel: pitch 32, amplitude 31, EG bias 99
+MIDI response A after touch: pitch 21, amplitude 45, EG bias 38
 timing     each voice's key comes up one second after its slowest carrier
            reaches its sustain level; programmed levels only, live
            velocity/controller offsets not applied
-timing A   OP1 at C4: key up 4.33 s, time to silence 47 ms
-timing A   OP2 at C4: key up 4.33 s, time to silence 249 ms
-timing A   OP4 at C4: key up 4.33 s, time to silence 9.29 s
-timing A   OP5 at C4: key up 4.33 s, time to silence 4.87 s
-timing B   OP1 at C4: key up 37.87 s, silent at key up
-timing B   OP3 at C4: key up 37.87 s, silent at key up
-timing B   OP5 at C4: key up 37.87 s, silent at key up
-settings   detune 0 · balance +0 · shift +0/+24
+timing A   OP1 at C3: key up 48.78 s, does not reach silence
+timing A   OP3 at C3: key up 48.78 s, does not reach silence
+timing A   OP5 at C3: key up 48.78 s, does not reach silence
+timing B   OP1 at C5: key up 48.78 s, does not reach silence
+timing B   OP3 at C5: key up 48.78 s, does not reach silence
+timing B   OP5 at C5: key up 48.78 s, does not reach silence
+settings   balance +0 · split C4 · shift +0/+0
 volume     total 99
-sliders    CS1 OP6 EG Rate 1 (61) on A+B · CS2 OP2 EG Rate 2 (59) on A
+sliders    CS1 Pitch EG Level 4 (86) on A+B · CS2 OP2 Key velocity (17) on A
 switches   EG forced damping off · sustain foot switch A+B · foot switch
            portamento A+B · soft pedal range 0
-polyphony  8 notes · 2 voices per note · 2 in unison poly
-pan        mix · voices combined, moves the mix · control LFO range 24
-tuning     equal temperament preset 1 (the DX7II default)
+polyphony  16 notes · 8 + 8, at most 8 per side · 2 + 2 in unison poly
+pan        on-on · separated, moves both levels · control off
+tuning     1/4 tone preset 10 · root C · voice A + voice B · not published
 keys       61 keys, C2 to C7, one column per semitone
                C2          C3          C4          C5          C6         C7
-           A+B █████████████████████████████████████████████████████████████
+           A   ████████████████████████│
+           B                           │████████████████████████████████████
+                                       ▲ split at C4
 
-pan EG     levels 39/79/29/51 · rates 17/7/40/0 · outputs 0 = A, 99 = B
-           B 99┤
-               │
-             50┤                                                ⣀⣀⣀⣀⣀⣀⣀⣀
-               │⠤⠤⠤⠤⠔⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠊⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉
-               │
-           A  0┤
-               └───────┴────────────────────────────────────────────────
-                0      ↓ key up 4.33 s                           34.50 s
+pan EG     flat: levels 50/50/50/50, the centre (nothing moves)
 
-algorithms A two shared modulators driving two pairs of carriers
-           B three 2-operator pairs
+algorithms A three 2-operator pairs + B three 2-operator pairs
+           both voices use algorithm 5: 22 of 128 voice bytes differ
 
-           A · Pulsazioni · algorithm 21
-           ┌─────┐              ┌─────┐
-           │ OP3 │◀─╮           │ OP6 │
-           └──┬──┴──╯           └──┬──┘
-              ├───────────┐        ├────────┐
-           ┌──▼──┐     ┌──▼──┐  ┌──▼──┐  ┌──▼──┐
-           │ OP1 │     │ OP2 │  │ OP4 │  │ OP5 │
-           └──┬──┘     └──┬──┘  └──┬──┘  └──┬──┘
-              └───────────┴──┬─────┴────────┘
-                             ▼
-                          OUTPUT
-
-           B · soft wave · algorithm 5
            ┌─────┐  ┌─────┐  ┌─────┐
            │ OP2 │  │ OP4 │  │ OP6 │◀─╮
            └──┬──┘  └──┬──┘  └──┬──┴──╯
@@ -991,27 +971,27 @@ seconds; the figure carries the note-on, the key-up and the sustain, and the tab
 under it gives every segment:
 
 ```console
-$ dxconvey instrument envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot
+$ dxconvey instrument envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot --glyphs dot
 the six-operator line · [both]
   dB
-   0┤⣧⠁L1=99          ⠈                                         ⠨
-    │⡏⡇ L2=85         ⠈                                         ⠨
-    │⡇⠉⠉⠒⠤⢄⡀          ⠈                                         ⠨
- -20┤⡇⠁    ⠈⠉⠒⠢⢄⣀     ⠈                                         ⠨
-    │⡇⠁          ⠉⠑⠢⠤⣀⡈ L3=60                                   ⠨
-    │⡇⠁               ⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠩⢢
-    │⡇⠁               ⠈                                         ⠨ ⠑⢄
- -40┤⡇⠁               ⠈                                         ⠨   ⠣⡀
-    │⡇⠁               ⠈                                         ⠨    ⠈⢢
-    │⡇⠁               ⠈                                         ⠨      ⠑⢄
- -60┤⡇⠁               ⠈                                         ⠨       ⠈⠢⡀
-    │⡇⠁               ⠈                                         ⠨         ⠈⢆
-    │⡇⠁               ⠈                                         ⠨           ⠑⢄
-    │⡇⠁               ⠈                                         ⠨            ⠈⠢⡀
- -80┤⡇⠁               ⠈                                         ⠨              ⠈⢆
-    │⡇⠁               ⠈                                         ⠨                ⠑⣄⣀⣀
-    └┴┴───────────────┴─────────────────────────────────────────┴─────────────────┴──
-             R3                        sustain                          R4
+   0┤.'L1=99           '                                        -
+    │.. L2=85          '                                        -
+    │.''--..           '                                        -
+ -20┤.'     ''-..      '                                        -
+    │.'          ''--. 'L3=60                                   -
+    │.'               ''''''''''''''''''''''''''''''''''''''''''-.
+    │.'                '                                        - '.
+ -40┤.'                '                                        -   -.
+    │.'                '                                        -    '.
+    │.'                '                                        -      -.
+ -60┤.'                '                                        -        -.
+    │.'                '                                        -         '.
+    │.'                '                                        -           -.
+    │.'                '                                        -             -.
+ -80┤.'                '                                        -              '.
+    │.'                '                                        -                -...
+    └┴┴────────────────┴────────────────────────────────────────┴─────────────────┴──
+             R3                         sustain                         R4
      R1 R2
      0       0.5 s       1 s      1.5 s      2 s       2.5 s      3 s       3.5 s
      ↑ note-on (key down)                                       ↓ note-off (key up)
