@@ -601,6 +601,112 @@ the confidence, and what each word costs
   name-only  the bytes say nothing better than `synth`, and only the name is left
 ```
 
+### The envelopes of that voice, drawn
+
+Four rates and four levels per operator are all a DX7 envelope is, and the tool
+turns them into seconds. `--plots` adds the six operators to the sheet above, on one
+time axis and one key-up: the sheet is repeated so that the figures travel with the
+numbers they came from. The figure names the level of every segment, the note-on is
+at the left edge and the key-up is the dashed column, and a curve with a `▸` is cut
+there because its release outlasts the voice — OP5 rings for three minutes.
+
+```console
+$ dxconvey show voice alienazi.syx --slot 1 --plots
+VOICE 1 · Tabla-3
+────────────────────────────────────────────────────────────────────
+SOUND TYPE percussion/drum · plausible
+BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
+algorithm  10 · a 3-operator stack with feedback plus two summed modulators
+carriers   OP1 OP4 · 2 of 6 reach the output
+feedback   OP3 on itself
+┌─────┐
+│ OP3 │◀─╮
+└──┬──┴──╯
+   │
+┌──▼──┐     ┌─────┐  ┌─────┐
+│ OP2 │     │ OP5 │  │ OP6 │
+└──┬──┘     └──┬──┘  └──┬──┘
+   │           ├────────┘
+┌──▼──┐     ┌──▼──┐
+│ OP1 │     │ OP4 │
+└──┬──┘     └──┬──┘
+   └─────┬─────┘
+         ▼
+      OUTPUT
+
+TOUCH      MIDI velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5
+           (modulators brighter), OP3 KVS 6 (modulators brighter)
+CONTROLS   mod wheel: EG bias 64
+CONTROLS   after touch: pitch 5, pitch bias 24
+timing     C4 · key up at 2.66 s, one second after the slowest carrier
+           reaches its sustain level; programmed levels only, live
+           velocity/controller offsets not applied
+carrier EG OP1 at C4: key up 2.66 s, does not reach silence
+carrier EG OP4 at C4: key up 2.66 s, silent at key up
+envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
+op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
+OP6  modulator d1   5.00   +4     66   0  69  0 49  0    99 11 96  0   0
+OP5  modulator d1   19Hz   -5     70   0  95 24 46  0    99 99 87  0   0
+OP4  carrier        5.00   +7     99   1  89 98 47 50    99 99  0  0   0
+OP3  modulator d2   4.00   -7     60   6  99 47 40 75    93 66  0  0   7
+OP2  modulator d1  257Hz   +0     96   5  75 14 69 35    99 99 91  0   2
+OP1  carrier      1.00Hz   -1     98   1  75 55 50 34    99 99 31 13   2
+
+volume     the amplitude envelope of the voice is that of OP1, the carrier
+           that lives longest
+keyboard   rate scaling OP1 2, OP2 2, OP3 7. A scaled envelope runs faster
+           in the treble and slower in the bass, so the rates above are not
+           one time
+EG bias    mod wheel can offset the levels live: the table is the rest
+           position
+portability lossy - remapped AMS; 4 settings not in DX7 voice file (after
+            touch, mod wheel, pitch bend)
+
+figures    the six operator envelopes at C4, one figure each; the six
+           figures share one time axis and one key-up, one second after the
+           slowest carrier reaches its sustain level
+OP1 carrier                                         OP2 modulator d1
+  dB
+   0┤⡷⡀                              ⠅               │⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅
+ -20┤⡇⠑⡄                             ⠅               │⡇ L1=99                         ⠅⠉⠑⠒⠤⢄⣀⡀
+    │⡇ ⠘⡄                            ⠅               │⡇ L3=91                         ⠅      ⠈⠉⠒⠢⠤▸
+ -40┤⡇  ⠘⢄ L3=31                     ⠅               │⡇                               ⠅
+    │⡇   ⠈⠦⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠥⢄⣀⡀            │⡇                               ⠅
+ -60┤⡇                               ⠅  ⠈⠉⠑⠒⠢⠤⢄⣀     │⡇                               ⠅
+    │⡇                               ⠅          ⠉⠉   │⡇                               ⠅
+ -80┤⡇                               ⠅               │⡇                               ⠅
+    └┴────┴──────────────────────────┴──────────┴─   └┴───────────────────────────────┴───────────┴
+     0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
+OP3 modulator d2                                    OP4 carrier
+  dB
+   0┤                                ⠅               │⡗⠤⡀                             ⠅
+ -20┤                                ⠅               │⡇ ⠈⠒⢄                           ⠅
+    │ L1=93                          ⠅               │⡇    ⠉⠢⡀                        ⠅
+ -40┤⣇ L2=66                         ⠅               │⡇      ⠈⠑⢄⡀                     ⠅
+    │⡿⡀                              ⠅               │⡇         ⠈⠢⣀                   ⠅
+ -60┤⡇⠱⡀                             ⠅               │⡇            ⠑⠤⡀                ⠅
+    │⡇ ⠱⡀ L3=0                       ⠅               │⡇              ⠈⠒⢄   L3=0       ⠅
+ -80┤⡇  ⢣⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   │⡇                 ⠑⠢⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀
+    └┴──┴────────────────────────────┴────────────   └┴───────────────────┴───────────┴────────────
+     0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
+OP5 modulator d1                                    OP6 modulator d1
+  dB
+   0┤                                ⠅               │                                ⠅
+ -20┤ L1=99                          ⠅               │ L1=99                          ⠅ L2=11
+    │⡏⠒⢄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣅⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀▸   │⡖⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠗⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒⠒▸
+ -40┤⡇  L3=87                        ⠅               │⡇                               ⠅
+    │⡇                               ⠅               │⡇                               ⠅
+ -60┤⡇                               ⠅               │⡇                               ⠅
+    │⡇                               ⠅               │⡇                               ⠅
+ -80┤⡇                               ⠅               │⡇                               ⠅
+    └┴─┴─────────────────────────────┴───────────┴   └┴───────────────────────────────┴───────────┴
+     0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
+
+     ↑ note-on at once and ↓ note-off in the same column of every panel:
+     one time axis for the six, 3.69 s, the life of the voice
+     ▸ cut at the edge, because their releases outlast it: OP2 (3.62 s), OP5 (3 min 30 s), OP6 (3 min 48 s)
+```
+
 ### The performances
 
 A performance is a pointer: two voices, a key mode, a split point, a tuning. One line
@@ -876,53 +982,6 @@ the six-operator line · [both]
 
     note
       The DX9 (4 operators) borrowed this one as its algorithm 5.
-```
-
-### Six waveforms, one figure
-
-The LFO has six shapes and two depths, and the voice stores three bits to pick the
-shape. The figure is the whole set on one grid, with the two depths of each:
-
-```console
-$ dxconvey instrument lfo waves --plot --no-table --wave all
-the six-operator line · [both]
-  0  triangle                                          1  saw down
-  mod
-    1┤   ⢸⡆      ⣷      ⢸⡆     ⢠⢇      ⡼⡀     ⢠⢇      │   ⢸⢆      ⡷⡀     ⢸⢆      ⣧      ⢸⡄      ⣧
-     │   ⡇⢱     ⢸⠈⡆     ⡇⢱     ⡜⠸⡀    ⢠⠃⢇     ⡜⠸⡀     │   ⢸⠈⢆     ⡇⠱⡀    ⢸⠈⢆     ⡇⢣     ⢸⠘⡄     ⡇⢣
-  0.5┤  ⢸ ⠈⡆    ⡇ ⢱    ⢸ ⠈⡆   ⢠⠃ ⢇    ⡜ ⠸⡀   ⢠⠃ ⢇     │   ⢸ ⠈⢆    ⡇ ⠱⡀   ⢸ ⠈⢆    ⡇ ⢣    ⢸ ⠘⡄    ⡇ ⢣
-     │  ⡇  ⢱   ⢸  ⠈⡆   ⡇  ⢱   ⡜  ⢸   ⢠⠃  ⡇   ⡜  ⢸     │   ⢸  ⠈⢆   ⡇  ⠱⡀  ⢸  ⠈⡆   ⡇  ⢣   ⢸  ⠘⡄   ⡇  ⢣
-    0┤ ⢸   ⠘⡄  ⡇   ⢣  ⢸   ⠘⡄ ⢀⠇   ⡇  ⡸   ⢸  ⢀⠇   ⡇    │⢣  ⢸   ⠘⡄  ⡇   ⢣  ⢸   ⠱⡀ ⢸   ⠈⢆  ⡇   ⠱⡀ ⢸
- -0.5┤ ⡎    ⢣ ⢰⠁   ⠘⡄ ⡎    ⢣ ⡸    ⢸ ⢀⠇    ⡇ ⡸    ⢸    │ ⢣ ⢸    ⠘⡄ ⡇    ⢣ ⢸    ⠱⡀⢸    ⠈⢆ ⡇    ⠱⡀⢸
-     │⢰⠁    ⠘⡄⡎     ⢣⢰⠁    ⠘⣄⠇     ⡇⡸     ⢸⢀⠇     ⡇   │  ⢣⢸     ⠘⡄⡇     ⢣⢸     ⠱⣸     ⠈⢆⡇     ⠱⣸
-   -1┤⡎      ⢳⠁     ⠘⡎      ⡿      ⢸⠇      ⡿      ⢸   │   ⠻      ⠘⠇      ⠻      ⠹      ⠈⠇      ⠹
-     └┬───────────────────────────────────────────┬   └┬───────────────────────────────────────────┬
-      0                                      1.08 s
-  2  saw up                                            3  square
-  mod
-    1┤   ⣴      ⢠⡆      ⣴      ⣰      ⢀⡆      ⣰       │⠉⠉⠉⢹   ⢸⠉⠉⠉⡇   ⡏⠉⠉⢹   ⡏⠉⠉⢹   ⢸⠉⠉⠉⡇   ⡏⠉⠉⢹
-     │  ⡜⢸     ⢠⠃⡇     ⡜⢸     ⡰⢹     ⢀⠎⡇     ⡰⢹       │   ⢸   ⢸   ⡇   ⡇  ⢸   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸
-  0.5┤ ⡜ ⢸    ⢠⠃ ⡇    ⡜ ⢸    ⡰⠁⢸    ⢀⠎ ⡇    ⡰⠁⢸       │   ⢸   ⢸   ⡇   ⡇  ⢸   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸
-     │⡜  ⢸   ⢠⠃  ⡇   ⡜  ⢸   ⢰⠁ ⢸    ⡎  ⡇   ⢰⠁ ⢸       │   ⢸   ⢸   ⡇   ⡇  ⢸   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸
-    0┤⠁  ⢸  ⢀⠎   ⡇  ⡰⠁  ⢸  ⢀⠇   ⡇  ⡜   ⢸  ⢠⠃   ⡇  ⡜   │   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇
- -0.5┤   ⢸ ⢀⠎    ⡇ ⡰⠁   ⢸ ⢀⠎    ⡇ ⡜    ⢸ ⢠⠃    ⡇ ⡜    │   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇
-     │   ⢸⢀⠎     ⡇⡰⠁    ⢸⢀⠎     ⡇⡜     ⢸⢠⠃     ⡇⡜     │   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸   ⢸   ⡇   ⡇
-   -1┤   ⢸⠎      ⡷⠁     ⢸⠎      ⡟      ⢸⠃      ⡟      │   ⢸⣀⣀⣀⡇   ⣇⣀⣀⣸   ⢸⣀⣀⣀⡇   ⣇⣀⣀⣸   ⢸⣀⣀⣀⡇   ⣇⣀⣀⣀
-     └┬───────────────────────────────────────────┬   └┬───────────────────────────────────────────┬
-      0                                      1.08 s
-  4  sine                                              5  sample&hold
-  mod
-    1┤ ⡜⢣     ⢠⠛⡄     ⡜⢣     ⢰⠱⡀     ⡎⢆     ⢰⠱⡀       │
-     │⢠⠃⠈⡆    ⡜ ⢱    ⢠⠃⠈⡆    ⡇ ⡇    ⢸ ⢸     ⡇ ⡇       │
-  0.5┤⡸  ⢇   ⢀⠇ ⠸⡀   ⡸  ⢇   ⢸  ⢸    ⡇  ⡇   ⢸  ⢸       │                                     ⡏⠉⠉⠉⠉⠉⠉⠉
-     │⡇  ⢸   ⢸   ⡇   ⡇  ⢸   ⡸  ⠘⡄  ⢀⠇  ⢣   ⡸  ⠘⡄      │⠒⠒⠒⠒⠒⠒⠒⡆              ⡤⠤⠤⠤⠤⠤⠤⢤       ⡇
-    0┤⠁  ⠈⡆  ⡜   ⢱  ⢠⠃  ⠈⡆  ⡇   ⡇  ⢸   ⢸   ⡇   ⡇  ⢸   │       ⠓⠒⠒⠒⠒⠒⠒⢲       ⡇      ⢸       ⡇
- -0.5┤    ⡇  ⡇   ⢸  ⢸    ⡇  ⡇   ⢱  ⡎   ⠈⡆ ⢰⠁   ⢱  ⡎   │              ⢸       ⡇      ⢸       ⡇
-     │    ⢸ ⢸     ⡇ ⡇    ⢸ ⢸    ⠘⡄⢀⠇    ⢣ ⡸    ⠘⡄⢀⠇   │              ⠘⠒⠒⠒⠒⠒⠒⠒⠃      ⠸⠤⠤⠤⠤⠤⠤⠤⠇
-   -1┤     ⢇⠎     ⠸⡰⠁     ⢇⠎     ⢣⡜     ⠘⣤⠃     ⢣⡜    │
-     └┬───────────────────────────────────────────┬   └┬───────────────────────────────────────────┬
-      0                                      1.08 s
-  6 shapes · speed 35 (5.566 Hz) · 6 cycles each
 ```
 
 ### One envelope, timed
