@@ -59,7 +59,7 @@ never changes the subject.
 | verb | kinds | the answer |
 | --- | --- | --- |
 | `show` | `summary` `all` `voice` `performance` `layout` `counts` `micro-tuning` `key-scaling` `system` `other` | what is in this dump |
-| `instrument` | `anatomy` `algorithm` `tuning` `envelope` `scaling` `lfo` `description` | what the machine does, with no file needed |
+| `instrument` | `anatomy` `algorithm` `tuning` `envelope` `scaling` `lfo` `description` `behaviour` `sound-type` | what the machine does, with no file needed |
 | `convert` | `banks` `package` `voices` `performances` | the porting to the DX7, and the register of what it costs |
 | `help` | `map` | this page, the page of one command, or the shape of all of them |
 
