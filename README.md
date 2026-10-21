@@ -124,6 +124,15 @@ the instrument (no dump needed)
 
 the output (writes files)
 └─ convert          convert DX7II voices for a DX7 and report what changes or cannot be carried over
+   ├─ banks         one or two 32-voice DX7 banks, loadable by a DX7 or Dexed as a cartridge: the
+                    everyday answer, and what `convert FILE` does
+   ├─ package       the same two banks in the tree to hand over: DX7/ with the banks and their
+                    reports, DX7II/ with the source and its own, README.txt, all in a folder named
+                    after the dump
+   ├─ voices        one DX7 voice file per source voice, named after the voice, with its supplement
+                    when present; two voices of one name and one content share a file; also a
+                    register of the run
+   └─ performances  one folder per performance: the voices it plays, and how to play it on a DX7
 
 the reference (help and the generated documents)
 ├─ help             the help of the tool, of one command, or the map of all of them
