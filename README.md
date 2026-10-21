@@ -266,7 +266,7 @@ keyboard   rate scaling OP1 2, OP2 2, OP3 7. A scaled envelope runs faster
            one time
 EG bias    mod wheel can offset the levels live: the table is the rest
            position
-portability lossy - remapped AMS; 4 settings not in DX7 voice file (after
+portability lossy · remapped AMS; 4 settings not in DX7 voice file (after
             touch, mod wheel, pitch bend)
 ```
 
@@ -664,7 +664,7 @@ keyboard   rate scaling OP1 2, OP2 2, OP3 7. A scaled envelope runs faster
            one time
 EG bias    mod wheel can offset the levels live: the table is the rest
            position
-portability lossy - remapped AMS; 4 settings not in DX7 voice file (after
+portability lossy · remapped AMS; 4 settings not in DX7 voice file (after
             touch, mod wheel, pitch bend)
 
 figures    the six operator envelopes at C4, one figure each; the six
