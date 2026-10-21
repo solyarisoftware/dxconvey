@@ -709,7 +709,8 @@ OP5 modulator d1                                    OP6 modulator d1
 
      ↑ note-on at once and ↓ note-off in the same column of every panel:
      one time axis for the six, 3.69 s, the life of the voice
-     ▸ cut at the edge, because their releases outlast it: OP2 (3.62 s), OP5 (3 min 30 s), OP6 (3 min 48 s)
+     ▸ cut at the edge, because their releases outlast it: OP2 (3.62 s), OP5 (3 min 30 s),
+       OP6 (3 min 48 s)
 ```
 
 ### The performances
