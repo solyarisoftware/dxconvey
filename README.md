@@ -134,6 +134,10 @@ the output (writes files)
                     register of the run
    └─ performances  one folder per performance: the voices it plays, and how to play it on a DX7
 
+a search over many dumps (takes a list)
+└─ search           which voices of a set of dumps answer a query: a tag, a name, the words of the
+                    behaviour
+
 the reference (help and the generated documents)
 ├─ help             the help of the tool, of one command, or the map of all of them
 └─ docs             print a generated reference document (markdown, to stdout)
@@ -1041,6 +1045,7 @@ R4         50  L4  0   -  61.3 dB  850 ms
 note-on: the level jumps at once to -50 dB, where the first rise starts
 total 3.70 s (key up at 2.85 s)
 ```
+
 
 ## A conversion with a register of losses
 
