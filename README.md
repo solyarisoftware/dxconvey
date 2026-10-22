@@ -230,7 +230,7 @@ This is the first voice of `alienazi.syx`.
 $ dxconvey show voice alienazi.syx --slot 1 --sheet
 VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
-SOUND TYPE percussion/drum · plausible
+SOUND TYPE percussion/drum · name-only
 BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
 algorithm  10 · a 3-operator stack with feedback plus two summed modulators
 carriers   OP1 OP4 · 2 of 6 reach the output
@@ -323,43 +323,49 @@ synth
 ### Searching by the tag
 
 Because the tag is a value and not a sentence, it can be searched: `--type` takes one
-of the seventeen names, case insensitive, and can be repeated. A word that is not a
-tag is refused (exit 2, with the page that lists them), and a tag that no voice of
-this dump carries answers that there is no match (exit 1) — a filter that matched
-nothing is a fact, not an error. The row after the name is the tag it matched.
+of the seventeen names, case insensitive, and can be repeated. It also takes one of
+the eight coarser words a sound library searches — `--type struck` is the bells, the
+mallets and the percussion in one filter — and the row still prints the fine word. A
+word that is neither is refused (exit 2, with the page that lists both levels), and a
+word that no voice of this dump carries answers that there is no match (exit 1) — a
+filter that matched nothing is a fact, not an error.
 
 `--describe` on a voice says which byte is behind every adjective, one group at a
 time; here the filters are enough to count what a bank holds:
 
 ```console
-$ dxconvey -q show voice alienazi.syx --type bell
-2   Respiri          bell        alg 11  carriers 2  R4 20 (OP4)  on a DX7: lossy
-4   Pulsazioni       bell        alg 21  carriers 4  R4 18 (OP5)  on a DX7: lossy
-5   Alien2000        bell        alg 11  carriers 2  R4 22 (OP4)  on a DX7: lossy
-6   SpacePig 3       bell        alg 32  carriers 6  R4 25 (OP1)  on a DX7: lossy
-11  OpenSpace        bell        alg  5  carriers 3  R4 23 (OP1)  on a DX7: lossy
-13  Monique          bell        alg  5  carriers 3  R4 35 (OP5)  on a DX7: lossy
-17  NubiVacche       bell        alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
-18  Gare 2000        bell        alg 17  carriers 1  R4 20 (OP1)  on a DX7: lossy
-19  BlackNoise       bell        alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
-20  PazzaOrch1       bell        alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
-21  Subatomo         bell        alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
-22  PazzaOrch2       bell        alg 12  carriers 2  R4 10 (OP3)  on a DX7: lossy
-26  RadioBot         bell        alg  5  carriers 3  R4 32 (OP5)  on a DX7: lossy
-27  Penombra         bell        alg  5  carriers 3  R4  8 (OP1)  on a DX7: lossy
-28  Incatata         bell        alg 25  carriers 5  R4  0 (OP1)  on a DX7: lossy
-29  Sabato20         bell        alg  4  carriers 2  R4 17 (OP1)  on a DX7: lossy
-30  VentiLenti       bell        alg  6  carriers 3  R4 27 (OP5)  on a DX7: lossy
-32  reversNois       bell        alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
-33  carnivori        bell        alg  9  carriers 2  R4  8 (OP3)  on a DX7: lossy
-36  GiorgiCoro       bell        alg  5  carriers 3  R4 30 (OP1)  on a DX7: lossy
-40  DownLife         bell        alg  3  carriers 2  R4  0 (OP4)  on a DX7: lossy
-44  De Chirico       bell        alg 20  carriers 3  R4 24 (OP4)  on a DX7: lossy
-45  moschini         bell        alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
-49  lievottoni       bell        alg  5  carriers 3  R4  0 (OP1)  on a DX7: lossy
-54  Dedalo           bell        alg 15  carriers 2  R4  8 (OP1)  on a DX7: lossy
-57  choralarch       bell        alg  5  carriers 3  R4 11 (OP1)  on a DX7: lossy
-60  scherzavo        bell        alg  5  carriers 3  R4  7 (OP1)  on a DX7: lossy
+$ dxconvey -q show voice alienazi.syx --type pad
+2   Respiri          pad         alg 11  carriers 2  R4 20 (OP4)  on a DX7: lossy
+4   Pulsazioni       pad         alg 21  carriers 4  R4 18 (OP5)  on a DX7: lossy
+5   Alien2000        pad         alg 11  carriers 2  R4 22 (OP4)  on a DX7: lossy
+6   SpacePig 3       pad         alg 32  carriers 6  R4 25 (OP1)  on a DX7: lossy
+9   Framura84        pad         alg  2  carriers 2  R4 35 (OP3)  on a DX7: lossy
+11  OpenSpace        pad         alg  5  carriers 3  R4 23 (OP1)  on a DX7: lossy
+13  Monique          pad         alg  5  carriers 3  R4 35 (OP5)  on a DX7: lossy
+17  NubiVacche       pad         alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
+18  Gare 2000        pad         alg 17  carriers 1  R4 20 (OP1)  on a DX7: lossy
+19  BlackNoise       pad         alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
+20  PazzaOrch1       pad         alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
+21  Subatomo         pad         alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
+22  PazzaOrch2       pad         alg 12  carriers 2  R4 10 (OP3)  on a DX7: lossy
+24  Framura84        pad         alg  2  carriers 2  R4 35 (OP3)  on a DX7: lossy
+26  RadioBot         pad         alg  5  carriers 3  R4 32 (OP5)  on a DX7: lossy
+27  Penombra         pad         alg  5  carriers 3  R4  8 (OP1)  on a DX7: lossy
+28  Incatata         pad         alg 25  carriers 5  R4  0 (OP1)  on a DX7: lossy
+29  Sabato20         pad         alg  4  carriers 2  R4 17 (OP1)  on a DX7: lossy
+30  VentiLenti       pad         alg  6  carriers 3  R4 27 (OP5)  on a DX7: lossy
+32  reversNois       pad         alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
+33  carnivori        pad         alg  9  carriers 2  R4  8 (OP3)  on a DX7: lossy
+36  GiorgiCoro       pad         alg  5  carriers 3  R4 30 (OP1)  on a DX7: lossy
+37  ApiCattive       pad         alg  1  carriers 2  R4 15 (OP3)  on a DX7: lossy
+40  DownLife         pad         alg  3  carriers 2  R4  0 (OP4)  on a DX7: lossy
+44  De Chirico       pad         alg 20  carriers 3  R4 24 (OP4)  on a DX7: lossy
+45  moschini         pad         alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
+49  lievottoni       pad         alg  5  carriers 3  R4  0 (OP1)  on a DX7: lossy
+54  Dedalo           pad         alg 15  carriers 2  R4  8 (OP1)  on a DX7: lossy
+55  AcquAfrica       pad         alg  5  carriers 3  R4 17 (OP3)  on a DX7: lossy
+57  choralarch       pad         alg  5  carriers 3  R4 11 (OP1)  on a DX7: lossy
+60  scherzavo        pad         alg  5  carriers 3  R4  7 (OP1)  on a DX7: lossy
 ```
 
 ### The law of the behaviour
@@ -517,8 +523,9 @@ the three questions, in order
   1 the bytes  the cells below: the behaviour's own first reading, and the fourteen axes it rests on
   2 the name   the tags it names, kept only if the cell allows them: a name that asks for a tag the
                bytes do not allow is dropped, in silence
-  3 the order  the name may confirm the reading of the bytes (`certain`) or pick another one the
-               cell allows (`plausible`); it never decides against them
+  3 the order  the name may confirm the reading of the bytes (`certain`), pick another one the cell
+               allows (`name-only`: the name decided) or be dropped by them (`plausible`: the bytes
+               decided); it never decides against them
 
 the cells, and the reading each one gives first
   noise · short                 percussion  no pitch reference and a struck, short body
@@ -527,7 +534,8 @@ the cells, and the reading each one gives first
   one shot · inharmonic · rings bell        inharmonic partials that ring after the strike
   one shot · inharmonic · short percussion  inharmonic and short: struck metal
   one shot · harmonic           pluck       harmonic one-shot that rings: a plucked or struck string
-  slow arrival · inharmonic     bell        a slow swell of inharmonic partials: a struck object
+  slow arrival · inharmonic     pad         a slow swell of inharmonic partials: a texture, not a
+                                            strike
   slow arrival · vibrato        strings     a slow body with a pitched vibrato
   slow arrival · layered        pad         a slow, layered body with a long tail
   slow arrival · single         pad         a slow body that fills in
@@ -562,6 +570,24 @@ the neighbourhood of every cell: the tags a name may pick from it
 Inside a cell, two tags also jump the queue when the cell allows them: `bass`, because a technique
 qualifies the register (`PLUCK BASS` is a bass), and `fx`, because a place or a noise is not an
 instrument whatever else the name says.
+
+the coarser words: the eight of a sound library, over the seventeen
+A catalogue searches a coarser level than a voice imitates, and `--type` takes these words too:
+`--type struck` is the bells, the mallets and the percussion in one filter.  The fold follows how
+the sound leaves the instrument; a row still prints the fine word.
+  keyed      piano, keys, organ        a keyboard under the hands, and a body that rings: the sound
+                                       follows the key
+  struck     bell, mallet, percussion  something is hit, and the strike is the sound
+  plucked    pluck                     a string pinched or picked, and the finger lets it ring
+  bowed      strings                   a string driven by friction, so the note can swell after it
+                                       starts
+  blown      brass, reed, pipe         a column of air, driven by a lip, a reed or an edge
+  sung       voice                     a throat: the only family whose resonator is a body and a
+                                       word
+  synthetic  lead, pad, fx, synth      no acoustic referent at all, which is what the lead, the pad
+                                       and the effect have
+  bass       bass                      a register rather than a family: the one coarse word that is
+                                       the tag itself
 
 the words a name is read by
 The dictionary is searched for the tag's own words — the subtype words first, because a subtype is
@@ -611,8 +637,8 @@ fx/texture
 
 the confidence, and what each word costs
   certain    the name names the reading the bytes give first
-  plausible  the name picks another reading the bytes allow, or there is no name
-  name-only  the bytes say nothing better than `synth`, and only the name is left
+  plausible  the bytes decided: no name, or a name they do not allow
+  name-only  the name picked another reading the bytes allow: the name decided
 ```
 
 ### The envelopes of that voice, drawn
@@ -628,7 +654,7 @@ there because its release outlasts the voice — OP5 rings for three minutes.
 $ dxconvey show voice alienazi.syx --slot 1 --plots --glyphs dot
 VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
-SOUND TYPE percussion/drum · plausible
+SOUND TYPE percussion/drum · name-only
 BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
 algorithm  10 · a 3-operator stack with feedback plus two summed modulators
 carriers   OP1 OP4 · 2 of 6 reach the output
