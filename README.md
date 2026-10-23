@@ -59,7 +59,7 @@ never changes the subject.
 | verb | kinds | the answer |
 | --- | --- | --- |
 | `show` | `summary` `all` `voice` `performance` `layout` `counts` `micro-tuning` `key-scaling` `system` `other` | what is in this dump |
-| `instrument` | `anatomy` `algorithm` `tuning` `envelope` `scaling` `lfo` `description` `behaviour` `sound-type` | what the machine does, with no file needed |
+| `instrument` | `memory` `algorithm` `tuning` `envelope` `scaling` `lfo` `description` `behaviour` `sound-type` | what the machine does, with no file needed |
 | `convert` | `banks` `package` `voices` `performances` | the porting to the DX7, and the register of what it costs |
 | `help` | `map` | this page, the page of one command, or the shape of all of them |
 
@@ -104,9 +104,9 @@ a dump (takes one .syx file)
    └─ other         list the records of other in a dump
 
 the instrument (no dump needed)
-└─ instrument       what the machine does, and how a sound is named: anatomy, algorithm, tuning,
+└─ instrument       what the machine does, and how a sound is named: memory, algorithm, tuning,
                     envelope, scaling, lfo, description, behaviour, sound-type
-   ├─ anatomy       what a voice, a performance and a file are made of
+   ├─ memory        what a voice, a performance and a file are made of
    ├─ algorithm     print the reference sheet of the 32 DX7 algorithms
    ├─ tuning        the intonations a performance can select, or the intonation of one voice
    │  ├─ presets    [DX7II only] the thirteen intonations, with their cent values
