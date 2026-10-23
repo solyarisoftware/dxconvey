@@ -134,6 +134,14 @@ the output (writes files)
                     register of the run
    └─ performances  one folder per performance: the voices it plays, and how to play it on a DX7
 
+a software target (takes one .syx file)
+└─ recipe           how a software target plays a performance: the instances, the controllers, the
+                    host, and what no target models
+   ├─ dexed         the recipe for Dexed: one instance per voice: the four controllers as one depth
+                    and three switches each, and the layer in the host
+   └─ ops7          the recipe for OPS7: one instrument with two layers: one matrix row per
+                    controller and destination, so the three ranges of a wheel stay three
+
 a search over many dumps (takes a list)
 └─ search           which voices of a set of dumps answer a query: a tag, a name, the words of the
                     behaviour
