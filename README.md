@@ -49,6 +49,21 @@ So the claim is not *lossless*, and it is not even *declared against silent*: it
 written down and citable, with the residue in writing. The result is not a verified
 acoustic copy of the DX7II voice, and the register says so in its own words.
 
+Two equations hold the whole of it, and the rest of this page is their consequence:
+
+```text
+DX7II voice       = DX7 voice (128 bytes) + 35 bytes a DX7 cannot hold
+DX7II performance = Voice A + Voice B + performance data
+```
+
+The DX7II kept the voice of its predecessor untouched and put its own parameters
+beside it: on a DX7 those thirty-five bytes have nowhere to go, so a porting gives
+something up **voice by voice**, and the register says which. The performance layer —
+single, dual or split, the detune, the balance, the split point, the slider
+assignment, the tuning — is a third object that a DX7 does not have, and it points to
+its two voices by slot number: extract both voices, drop their thirty-five bytes, and
+what is left is two voices **both truncated**, plus nothing of the layer.
+
 ## The command line, in three layers
 
 The **verb** says what you want; the **kind** says which answer; the **options** say how
@@ -56,29 +71,21 @@ that answer is varied. The verb alone answers with the shortest useful answer; a
 a different answer — never a flag — and the options come after both, because an option
 never changes the subject.
 
-| verb | kinds | the answer |
-| --- | --- | --- |
-| `show` | `summary` `all` `voice` `performance` `layout` `counts` `micro-tuning` `key-scaling` `system` `other` | what is in this dump |
-| `instrument` | `memory` `algorithm` `tuning` `envelope` `scaling` `lfo` `description` `behaviour` `sound-type` | what the machine does, with no file needed |
-| `convert` | `banks` `package` `voices` `performances` | the porting to the DX7, and the register of what it costs |
-| `help` | `map` | this page, the page of one command, or the shape of all of them |
+The verbs answer five kinds of question: what is in a dump (`show`, `search`), what the
+machine does with no file at all (`instrument`), what a porting to the DX7 costs
+(`convert`), how a software target plays a performance (`recipe`), and how the tool
+itself works (`help`, `docs`). The map is a command, not this table — `help map` lists
+every verb and every kind, and `--tree` draws it (the next block).
 
 Two shortcuts, because they are the two questions asked most: `dxconvey FILE.syx` is
 `show summary FILE.syx`, and `dxconvey convert FILE.syx` writes the DX7 banks in a folder
-beside the dump.
-
-Every page of the tool is reachable from the tool: `dxconvey help` is the page of the
-whole command line, `dxconvey help VERB KIND` the page of one answer, and
-`dxconvey help map` the shape of all of them — which is the next block.
-
-`converse`, a natural-language interface to instrument data, is a later goal; it is
-**not** part of the current CLI.
+beside the dump. `converse`, a natural-language interface to instrument data, is a later
+goal; it is **not** part of the current CLI.
 
 ### The shape of the command line
 
-`help map` names the four groups, every verb and every kind, one line each — and
-`--tree` draws the same map with its branches, which is how to read the shape
-rather than look for one command:
+Every verb and every kind, one line each: this is the map the tool prints about
+itself, so it cannot describe a command that does not exist.
 
 ```console
 $ dxconvey help map --tree
@@ -178,8 +185,8 @@ that has the block elements and not the dots.
 
 ### The dump, at a glance
 
-One line per question: what the file is, what it holds, and what a DX7
-would lose.
+One line per question: what the file is, what it holds, and what a DX7 would
+lose.
 
 ```console
 $ dxconvey show summary alienazi.syx
@@ -232,11 +239,10 @@ $ dxconvey show sysex alienazi.syx
 
 ### A voice, in full
 
-One voice is six operators. The sheet says what kind of sound it is and how it
-behaves, gives the routing, the touch and the controllers, what a DX7 keeps, and
-the timing of every operator; `--details` adds the four rates and four levels of
-each, and `--plots` draws the six envelopes on one time axis with one key-up.
-This is the first voice of `alienazi.syx`.
+One voice is six operators: the sheet says the routing, the touch, the controllers
+and what a DX7 keeps, then the timing of every operator. `--details` adds the four
+rates and four levels of each, and `--plots` draws the six envelopes on one time
+axis. This is the first voice of `alienazi.syx`.
 
 ```console
 $ dxconvey show voice alienazi.syx --slot 1 --sheet
@@ -295,21 +301,21 @@ portability lossy · remapped AMS; 4 settings not in DX7 voice file (after
 
 A voice carries no word for what it is, so the tool says what it **imitates**: one
 of seventeen tags, from `piano` to `synth`, never a claim about the sound itself.
-Beside the tag it writes one phrase of **behaviour**, and that phrase is not an
-opinion either — it is computed from the bytes on fourteen axes (attack, body,
-release, spectrum, brightness, density, lfo_motion, pitch_arc, lfo_shape,
-lfo_arrival, feedback, timbre, layering, touch), each a threshold over the
-operators, the envelopes, the ratios and the DX7II supplement. No model, no
-network, no listening: the same file gives the same phrase every time.
+Beside the tag it writes one phrase of **behaviour**, computed from the bytes on
+fourteen axes — attack, body, release, spectrum, brightness, density, lfo_motion,
+pitch_arc, lfo_shape, lfo_arrival, feedback, timbre, layering, touch — each a
+threshold over the operators, the envelopes and the ratios. No model, no network,
+no listening: the same file gives the same phrase every time.
 
-The order is the argument. **The bytes** give the axes; **the axes** give the
-behaviour; **the phrase and the name of the voice** together give the tag — the name
-may confirm the reading the bytes allow, or pick another one, but it never decides
-against them. The confidence line says who decided: `certain`, `plausible`,
-`name-only`, or `-` for a slot that still holds the factory voice, which has no
-sound type at all and prints a dash. `dxconvey -q instrument description` lists the
-seventeen, one per line; without `-q` the same command prints the definition of
-each one, the fourteen axes and the four bands of every sentence:
+The order is the argument. **The bytes** give the axes, **the axes** give the
+behaviour, and **the phrase with the name of the voice** together give the tag — a
+name may confirm the reading the bytes allow, or pick another one, but it never
+decides against them. The confidence line says who decided: `certain`, `plausible`,
+`name-only`, or `-` for a slot that still holds the factory voice.
+
+The law of every axis is one command away (`instrument behaviour`), and so is the
+table of the cells that give each tag (`instrument sound-type`, with `--verbose` for
+the same table read the other way). This page shows the answer, not the law:
 
 ```console
 $ dxconvey -q instrument description
@@ -322,15 +328,10 @@ why · the byte behind every adjective, one sentence per group
 ### Searching by the tag
 
 Because the tag is a value and not a sentence, it can be searched: `--type` takes one
-of the seventeen names, case insensitive, and can be repeated. It also takes one of
-the eight coarser words a sound library searches — `--type struck` is the bells, the
-mallets and the percussion in one filter — and the row still prints the fine word. A
-word that is neither is refused (exit 2, with the page that lists both levels), and a
-word that no voice of this dump carries answers that there is no match (exit 1) — a
-filter that matched nothing is a fact, not an error.
-
-`--describe` on a voice says which byte is behind every adjective, one group at a
-time; here the filters are enough to count what a bank holds:
+of the seventeen names, or one of the eight coarser words a sound library searches —
+`--type struck` is the bells, the mallets and the percussion in one filter — and it
+repeats. A word that is neither is refused (exit 2, with the page that lists both
+levels), and a filter that matched nothing is a fact, not an error (exit 1).
 
 ```console
 $ dxconvey -q show voice alienazi.syx --type pad
@@ -367,287 +368,14 @@ $ dxconvey -q show voice alienazi.syx --type pad
 60  scherzavo        pad         alg  5  carriers 3  R4  7 (OP1)  on a DX7: lossy
 ```
 
-### The law of the behaviour
-
-A phrase like `slow swell, long tail, inharmonic` is not an impression: every word
-is a threshold over a number the file holds, and the fourteen axes are the whole
-vocabulary the tool has for what a sound does. `instrument behaviour` prints the
-law of each one — what it measures in the bytes, and the number that turns the
-number into the word:
-
-```console
-$ dxconvey instrument behaviour
-the six-operator line · [both]
-the fourteen axes of behaviour, and the rule behind every word
-
-Every word of BEHAVIOUR is a threshold over a number the file holds: nothing here listens and
-nothing guesses, so the same voice is described the same way every time it is read.  The words are
-chosen for a musician; the number behind each one is the same one, always.
-
-attack        how the note arrives
-              measure: the smallest R1 (rate 1) of the carriers that sound
-              instant  R1 60 or more
-              fast     R1 from 35 to 59
-              slow     R1 below 35
-
-body          what the note does while the key is down
-              measure: the largest L3 (level 3) of the carriers, and the attack
-              swell     the attack is slow: the note arrives and settles, whatever L3 does
-              one_shot  L3 is 0: the note dies by itself, the level reaching zero
-              held      L3 from 45 to 99: the note holds while the key is down
-              decaying  L3 from 1 to 44: the note falls but does not reach silence
-
-release       how the note ends after the key is up
-              measure: L4 and the smallest R4 (rate 4) of the carriers
-              infinite  any L4 is above 0: the note never stops on its own
-              long      R4 30 or less
-              medium    R4 from 31 to 59
-              short     R4 60 or more
-
-spectrum      whether the partials are whole multiples of the key
-              measure: the ratio of every sounding operator, and the fixed-frequency ones; 50 cents
-                       is the line between out of tune and another partial
-              harmonic    every operator is a whole multiple of the key (0.5, 1, 2, …)
-              inharmonic  an operator is off a whole multiple, or sits on a fixed frequency, and
-                          another operator is a whole multiple
-              fixed       every sounding carrier is on a fixed frequency, no operator is a whole
-                          multiple or off one, and the feedback is below 3
-              noise       the same, with the feedback at 3 or more: no pitch reference at all
-
-brightness    how far the modulators reach
-              measure: the highest modulator ratio; a fixed modulator is divided by middle C (261.63
-                       Hz), because what matters is where its sidebands land
-              none         there is no modulator: nothing reaches at all
-              dark         the ratio is below 2
-              balanced     from 2 to 4
-              bright       from 5 to 9
-              very bright  10 or more
-
-density       how many layers a single note has
-              measure: the number of carriers that sound
-              thin   one carrier
-              pair   2 carriers
-              rich   3 to 4 carriers
-              dense  more than 4 carriers
-
-lfo_motion    what the LFO does to the sound
-              measure: the LFO waveform, its speed, and what it is routed to — pitch, amplitude or
-                       both
-              static   no LFO routed, or the LFO has no destination that sounds
-              tremolo  the amplitude only: a pulsing volume
-              drift    the pitch, slowly: it sags and wanders
-              vibrato  the pitch, fast: a musical vibrato
-              random   the sample & hold waveform: random steps
-
-pitch_arc     the shape of the pitch envelope
-              measure: the four pitch EG levels, and the first rate
-              static  all four levels are at 50, or there is no pitch EG
-              blip    the first rate is 60 or more and the last two levels are at 50: an excursion
-                      that comes back
-              rise    the last level is above the first: the pitch climbs
-              fall    the last level is below the first: the pitch drops
-              glide   the last level equals the first and the EG is not at rest: a slow move
-
-lfo_shape     the shape of the modulation
-              measure: the LFO waveform, when the LFO moves at all
-              none     the LFO is static: there is no shape
-              smooth   sine or triangle
-              pulse    square
-              ramp     saw up or saw down
-              stepped  sample & hold
-
-lfo_arrival   when the modulation arrives
-              measure: the LFO delay of the voice
-              none       the LFO is static
-              immediate  the delay is 0
-              delayed    the delay is 1 to 30
-              late       the delay is above 30
-
-feedback      how hard the operator feeds back on itself
-              measure: the feedback amount of the algorithm
-              none    0
-              mild    1 to 2
-              strong  3 or more
-
-timbre        which way the timbre moves while the note sounds
-              measure: L3 against L1, of the modulators and of the carriers
-              static   nothing moves, or there is no modulator
-              opening  a modulator ends (L3) above where it started (L1): the sound brightens
-              closing  a modulator ends below the smallest carrier's L3: the sound darkens
-
-layering      the layers and their tuning
-              measure: the detune and the unison of the operators
-              single   one layer, nothing detuned
-              layered  two or more layers, in tune
-              detuned  two or more layers, detuned against each other
-
-touch         what the player can move while the note sounds
-              measure: the key velocity sensitivity of the operators, and the controllers of the
-                       DX7II supplement — a set, because a voice can route more than one
-              velocity     an operator has a key velocity sensitivity above 0
-              after touch  the supplement routes after touch to pitch, amplitude or EG bias
-              mod wheel    the supplement routes the mod wheel
-              breath       the supplement routes breath
-              none         nothing of the above: an empty set
-
-how the fourteen become one line
-The phrase starts with the onset — instant hit, a hit, slow swell, decays, held note — and then adds
-the tail, the spectrum, the layers, the timbre, the motion and the pitch, in that order.  It stops
-at 65 characters: what does not fit is in `--verbose`, never lost.  The saturated axes — velocity,
-feedback, layering, the additive structure — appear only as exceptions: `no velocity`, `no
-feedback`, `single layer`, `additive`.
-```
-
-### The law of the tag
-
-The tag rests on two kinds of evidence, and they are not equal. The **bytes**
-decide which readings are possible — the cells below, one per combination of
-behaviour axes, each with the sentence that justifies it — and a **name** can only
-choose among the tags the cell allows: a name that asks for anything else loses to
-the bytes, in silence. `instrument sound-type` prints the table, the neighbourhood
-of every cell, the words a name is read by and what each confidence costs;
-`--verbose` adds the same table read the other way — for each of the seventeen
-tags, the cells that give it first:
-
-```console
-$ dxconvey instrument sound-type
-the six-operator line · [both]
-how the tag is decided: the bytes first, the name inside what they allow
-
-The tag is an imitation of a sound, never a statement of what a voice is.  Two kinds of evidence
-meet here, and they are not equal: the bytes always have the last word on which readings are
-possible, and a name can only choose among them.
-
-the three questions, in order
-  1 the bytes  the cells below: the behaviour's own first reading, and the fourteen axes it rests on
-  2 the name   the tags it names, kept only if the cell allows them: a name that asks for a tag the
-               bytes do not allow is dropped, in silence
-  3 the order  the name may confirm the reading of the bytes (`certain`), pick another one the cell
-               allows (`name-only`: the name decided) or be dropped by them (`plausible`: the bytes
-               decided); it never decides against them
-
-the cells, and the reading each one gives first
-  noise · short                 percussion  no pitch reference and a struck, short body
-  noise · held                  fx          no pitch reference over a held body
-  one shot · fixed              percussion  a fixed carrier and an instant decay: a hit
-  one shot · inharmonic · rings bell        inharmonic partials that ring after the strike
-  one shot · inharmonic · short percussion  inharmonic and short: struck metal
-  one shot · harmonic           pluck       harmonic one-shot that rings: a plucked or struck string
-  slow arrival · inharmonic     pad         a slow swell of inharmonic partials: a texture, not a
-                                            strike
-  slow arrival · vibrato        strings     a slow body with a pitched vibrato
-  slow arrival · layered        pad         a slow, layered body with a long tail
-  slow arrival · single         pad         a slow body that fills in
-  decays · closing              piano       the modulator closes while the carriers hold
-  decays · rings                pluck       a decaying body that rings on after the strike
-  decays                        pluck       a harmonic body that dies while held
-  held · brass                  brass       feedback, a fast attack and a velocity-sensitive
-                                            modulator
-  held · organ                  organ       nothing moves: held, harmonic and static
-  held · vibrato                strings     a held body with a pitched vibrato
-  held · lead                   lead        bright, fast and fed back: a synth lead
-  held · detached               pad         a held body, detuned or layered
-  held · nothing else           synth       held body with steady modulation
-  the bass register             bass        the carriers speak in the bass register
-
-the neighbourhood of every cell: the tags a name may pick from it
-  noise · short, noise · held
-      bell mallet percussion fx
-  one shot · fixed
-      bell mallet percussion
-  one shot · inharmonic · rings, one shot · inharmonic · short
-      piano bell mallet percussion pluck bass reed pipe voice fx
-  one shot · harmonic
-      piano keys bell mallet percussion pluck bass strings brass reed pipe lead pad fx
-  slow arrival · inharmonic, slow arrival · vibrato, slow arrival · layered, slow arrival · single
-      organ bell mallet percussion pluck strings reed pipe voice pad fx
-  decays · closing, decays · rings, decays
-      piano keys bell mallet percussion pluck bass strings voice lead pad fx synth
-  held · brass, held · organ, held · vibrato, held · lead, held · detached, held · nothing else, the
-    bass register
-      piano keys organ bell mallet percussion bass strings brass reed pipe voice lead pad fx synth
-Inside a cell, two tags also jump the queue when the cell allows them: `bass`, because a technique
-qualifies the register (`PLUCK BASS` is a bass), and `fx`, because a place or a noise is not an
-instrument whatever else the name says.
-
-the coarser words: the eight of a sound library, over the seventeen
-A catalogue searches a coarser level than a voice imitates, and `--type` takes these words too:
-`--type struck` is the bells, the mallets and the percussion in one filter.  The fold follows how
-the sound leaves the instrument; a row still prints the fine word.
-  keyed      piano, keys, organ        a keyboard under the hands, and a body that rings: the sound
-                                       follows the key
-  struck     bell, mallet, percussion  something is hit, and the strike is the sound
-  plucked    pluck                     a string pinched or picked, and the finger lets it ring
-  bowed      strings                   a string driven by friction, so the note can swell after it
-                                       starts
-  blown      brass, reed, pipe         a column of air, driven by a lip, a reed or an edge
-  sung       voice                     a throat: the only family whose resonator is a body and a
-                                       word
-  synthetic  lead, pad, fx, synth      no acoustic referent at all, which is what the lead, the pad
-                                       and the effect have
-  bass       bass                      a register rather than a family: the one coarse word that is
-                                       the tag itself
-
-the words a name is read by
-The dictionary is searched for the tag's own words — the subtype words first, because a subtype is
-more specific than its tag — and the order of the seventeen tags decides the order of the readings,
-never the position in the name: `BELL-FLUTE` is a bell, measured at 80.0% against 76.1% for the
-head-noun rule.
-  piano       PIANO PNO GRAND RHODES EPIANO HONKY UPRIGHT WURLY WURLI CP70
-  keys        CLAV CLAVI CLAVINET HARPSICH HARPSICHORD HARPSI CEMBALO CEMBAL
-  organ       ORGAN ORG PIPES PIPE B3 DRAWBAR CHURCH ACCORDION CALIOPE HAMMOND
-  bell        BELL CHIME GONG CARILLON GLOCK GLOKENSPL CELESTA MUSICBOX
-  mallet      MARIMBA VIBE VIBES VIBRAPHONE XYLO XYLOPHONE KALIMBA MALLET MALLT GLOCK
-  percussion  DRUM PERC PRC AGOGOBELL SAMBA TIMPANI TIMBALES TIMBALE CONGA BONGO TABLA TOM SNARE
-              KICK CLAP HAT CYMBAL CRASH RIDE GONG BLOCK CLAVE CASTANET TAMB TAMBOURIN SHAKER
-              MARACAS CABASA GUIRO QUIJADA TRIANGLE STEELDRUM TAIKO GRANCASSA SIDESTICK FLEXATONE
-              SLEIGHBELL WINDCHIME AGOGO COWBELL WOODBLOCK SDRUM BDRUM
-  pluck       GUITAR GTR GUIT HARP LUTE SITAR KOTO BANJO MANDOLIN MANDLIN PIZZ UKULELE UKLELE
-              DULCIMER BALALAIKA NYLON FRETLESS PLUCK PLUK THUMBPICK BAKKET SYAMISEN TAISHOKOTO
-              ZIMBALON
-  bass        BASS BS SUB BASSES ODDBASS HARDBASS SYNBASS
-  strings     STRINGS STRING STRG STG STRGS STR CELLO VIOLIN VIOLA ORCHESTRA ORCH ENSEMBLE ENS
-              SECTION TREMOLO BOW CONBASS PIZZICATO
-  brass       BRASS BRS TRUMPET TRUMP HORN TROMBONE TBONE TUBA FLUGEL SYNBRASS SYNBRS BTRUMPET
-              BRASSHORNS
-  reed        SAX OBOE CLARINET BASSOON HARMONICA HRMNCA ENGLISHHORN BAGPIPE SHAW SHANAI REED
-  pipe        FLUTE FLT PICCOLO WHISTLE WHISL PANFLUTE PAN RECORDER OCARINA SHAKUHACHI SHAKUHACH
-              WOOFLUTE TOYFLUTE BAMBOO QUENA
-  voice       VOICE VOICES VOX CHOIR CHORUS OOH AAH VOCAL FVOICE ALTVOX FEMALE MALE
-  lead        LEAD SYNLEAD SOLO MONO SAWLEAD REEDLEAD RESOLEAD
-  pad         PAD SWEEP TEXTURE ATMOS AMBIENT WARM DRONE STRINGMACHINE
-  fx          FX EFFECT NOISE NOIS SPACE RAIN WIND TRAIN TAKE LASER EXPLOSION WATER WATERDROP BUBBLE
-              WASP STING HIT IMPACT SCIFI TAKEOFF ERUPT STORM BIRD GLASS SHIMMER SIREN HELICOPTER
-              INSECT SCRATCH ROARING SPOON SLEDGE TROPICBIRD AMBULANCE POLICE
-  synth       SYNTH SYN DIGI DIGITAL FM ANALOG MOOG PROPHET PPG JUNO OBERHEIM
-
-the subtype words, searched before the tag's own
-piano/acoustic, piano/electric, piano/toy, keys/clav, keys/harpsichord, organ/drawbar, organ/pipe,
-organ/accordion, bell/tubular, bell/chime, bell/glockenspiel, bell/celesta, mallet/marimba,
-mallet/vibes, mallet/xylophone, mallet/kalimba, percussion/drum, percussion/metal, percussion/noise,
-percussion/block, percussion/timpani, percussion/steel, pluck/guitar, pluck/harp, pluck/lute,
-pluck/koto, pluck/banjo, pluck/sitar, bass/electric, bass/acoustic, bass/synth, bass/sub,
-strings/solo, strings/ensemble, strings/cello, strings/violin, strings/viola, strings/pizzicato,
-brass/trumpet, brass/horn, brass/trombone, brass/tuba, brass/section, brass/synth, reed/sax,
-reed/oboe, reed/clarinet, reed/bassoon, reed/harmonica, pipe/flute, pipe/piccolo, pipe/pan,
-pipe/whistle, pipe/ocarina, voice/choir, voice/solo, voice/vox, lead/saw, lead/square, lead/mono,
-lead/solo, pad/warm, pad/sweep, pad/texture, pad/drone, fx/noise, fx/hit, fx/transition, fx/space,
-fx/texture
-
-the confidence, and what each word costs
-  certain    the name names the reading the bytes give first
-  plausible  the bytes decided: no name, or a name they do not allow
-  name-only  the name picked another reading the bytes allow: the name decided
-```
-
 ### The envelopes of that voice, drawn
 
-Four rates and four levels per operator are all a DX7 envelope is, and the tool
-turns them into seconds. `--plots` adds the six operators to the sheet above, on one
-time axis and one key-up: the sheet is repeated so that the figures travel with the
+Four rates and four levels per operator are all a DX7 envelope is, and the tool turns
+them into seconds. `--plots` adds the six operators to the sheet above, on one time
+axis and one key-up: the sheet is repeated so that the figures travel with the
 numbers they came from. The figure names the level of every segment, the note-on is
-at the left edge and the key-up is the dashed column, and a curve with a `▸` is cut
-there because its release outlasts the voice — OP5 rings for three minutes.
+at the left edge and the key-up is the dashed column; a curve with a `▸` is cut there
+because its release outlasts the voice — OP5 rings for three minutes.
 
 ```console
 $ dxconvey show voice alienazi.syx --slot 1 --plots --glyphs dot
@@ -798,8 +526,8 @@ $ dxconvey show performance alienazi.syx
 
 `--sheet` stops pointing and draws: which voice plays which keys, the sound of each
 in words, the panning, the polyphony, the tuning, the switches — and the algorithm of
-each voice as a block diagram.  This one, the eighteenth performance of
-`alienazi.syx`, is a split, so the keyboard is drawn too, band by band.
+each voice as a block diagram. This one, the eighteenth, is a split, so the keyboard
+is drawn too, band by band.
 
 ```console
 $ dxconvey show performance alienazi.syx --slot 18 --sheet
@@ -855,10 +583,9 @@ algorithms A three 2-operator pairs + B three 2-operator pairs
 
 ### A performance, read
 
-`--describe` says what it sounds like instead of drawing it: the tag of each voice
-and how sure it is, one phrase of behaviour, and the bytes behind every axis of that
-answer — the envelope, the spectrum, the density, the timbre path, the feedback, the
-touch — with what the file cannot say.
+`--describe` says what it sounds like instead of drawing it: the tag of each voice and
+how sure it is, one phrase of behaviour, and the bytes behind every axis of that
+answer, with what the file cannot say.
 
 ```console
 $ dxconvey show performance alienazi.syx --slot 1 --describe
@@ -907,9 +634,8 @@ note       what this cannot say: what a controller's EG bias is worth in
 ### The porting, and its register
 
 Two banks land next to the dump, each with the register that names, voice by voice,
-what a DX7 keeps and what it does not — the three outcomes of the preamble, one
-line per voice.  This is `alienazi.syx` itself: how many voices come across
-untouched, how many are remapped, and how many lose something.
+what a DX7 keeps and what it does not — the three outcomes of the preamble, one line
+per voice. This is `alienazi.syx` itself.
 
 ```console
 $ dxconvey convert alienazi.syx -o out/
@@ -950,9 +676,8 @@ alienazi_1-32 — DX7 bank 1 of 2
 
 ### A reference sheet, and no file needed
 
-The 32 algorithms are the same on every six-operator machine. `instrument algorithm
-5` draws one, names its carriers and its feedback, and tells how it sounds and how
-to program it.
+The 32 algorithms are the same on every six-operator machine: `instrument algorithm
+5` draws one, names its carriers and its feedback, and tells how it sounds.
 
 ```console
 $ dxconvey instrument algorithm 5
@@ -1004,9 +729,8 @@ the six-operator line · [both]
 
 ### One envelope, timed
 
-Four rates and four levels are all a DX7 envelope is. The model turns them into
-seconds; the figure carries the note-on, the key-up and the sustain, and the table
-under it gives every segment:
+The model turns four rates and four levels into seconds; the figure carries the
+note-on, the key-up and the sustain, and the table under it gives every segment:
 
 ```console
 $ dxconvey instrument envelope --rates 95,60,40,50 --levels 99,85,60,0 --plot --glyphs dot
@@ -1077,7 +801,7 @@ the [DX7 collection page](https://solyaris.altervista.org/dx7.html).
 
 This repository is a **coming soon**: it describes the project and shows what the
 tool prints, and it holds no code yet. The source code lands with the **first public
-release, planned for November 2026 and at the latest December 2026**. The sample
+release, by December 2027**. The sample
 package linked above is an earlier conversion example, not a source code release.
 
 What the first release carries is the reading of DX7II dumps, the porting to the DX7
@@ -1086,6 +810,54 @@ interface named `converse` is a later goal, not part of it.
 
 The public repository is licensed under [MIT](LICENSE). That license applies to
 the project software, not to separately published sound files.
+
+## What comes next
+
+The tool answers today what a dump holds, what the machine does, what a porting costs and
+how a target plays a performance. What follows is not conversion, and none of it changes
+the shape of the command line:
+
+- **a library, not a list of files** — `search` answers over the dumps named on the command
+  line, one query at a time. What is missing is the index that remembers them, so that a
+  collection of banks becomes a catalogue to browse instead of a folder to read again.
+- **`lint fix`** — finding a programming error or an anomalous setting inside a voice (a
+  carrier silent, an envelope that never comes back, a scaling that cancels its operator)
+  and correcting it at the desk instead of discovering it on the instrument. The verb is
+  `lint`, the correction is its `fix` kind, because a verb says what you want and a kind
+  says which answer.
+- **a `recipe` for more targets** — `recipe` writes down today how Dexed and OPS7 play a
+  performance: one instance per voice with the controllers spread over the host, or one
+  instrument with two layers. The programs that read these files are compared, one by one,
+  on [the DX7 emulators page](https://solyaris.altervista.org/dx7-emulators.html).
+- **`randomizer`** — a voice is a set of numbers that a hand can only reach so far: the plan
+  is a verb that makes variations of one voice around its own behaviour and names what it
+  changed, so the result is a patch to audition, not a lottery.
+
+Nothing here carries a date. What the first release brings is written above: the reading of
+DX7II dumps, the porting with its register, the reference sheets of the instrument, and the
+recipes for the two targets.
+
+## The questions a DX7 owner asks
+
+**Can my DX7 load the bank as it is?** No. A DX7 reads a DX7 voice or a bank of thirty-two;
+an All-Data dump is what a DX7II writes, and a DX7 has no way to take it. Inside the dump,
+though, the two voice banks are already exactly what a DX7 sends when it dumps its memory —
+two standard messages, header and checksum included — so the export is a lift, not a
+rebuild. This tool is not the first to do it; it is the one that writes the register beside
+the banks.
+
+**Will the converted voice sound the same?** No, and the tool does not claim it will. What
+survives is the whole DX7 voice, byte for byte. What changes is everything that leaned on the
+thirty-five bytes: the amplitude modulation sensitivity is mapped from the eight values a
+DX7II sets onto the four a DX7 has, the pitch envelope is rescaled into the single range the
+DX7 offers, and the rest cannot be played on a DX7 at all. The register says, voice by
+voice, what was remapped and what was left behind.
+
+**Is there a lossless "save as DX7"?** No, and a tool that offers one is dropping the
+thirty-five bytes without saying so: the DX7 voice format has no room for them, which is a
+property of the machine Yamaha shipped in 1983, not of the converter. What a converter can
+choose is whether the loss is declared — remapped where a rule exists, declared where it
+does not, never silent.
 
 ## Supporting the work
 
