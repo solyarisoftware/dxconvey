@@ -96,7 +96,7 @@ a dump (takes one .syx file)
                     what a DX7 keeps
    ├─ performance   one line per performance: slot, name, key mode, and the two voices with their
                     algorithms
-   ├─ layout        the SysEx layout of one dump: one box per message, with offsets
+   ├─ sysex         the SysEx messages of one dump: one box per message, with offsets
    ├─ counts        one count per dump, for a list of them: how much a set of banks holds
    ├─ micro-tuning  list the records of micro-tuning in a dump
    ├─ key-scaling   list the records of key-scaling in a dump
@@ -201,34 +201,33 @@ Every SysEx message of the file is a box: the block's own name, its size, and th
 offset where it starts.
 
 ```console
-$ dxconvey show layout alienazi.syx
+$ dxconvey show sysex alienazi.syx
   alienazi.syx  ·  12,128 bytes  ·  DX7II All-Data dump
 
-  ┌─────────────────────────┬─────────────────────────┬───────────┐
-  │ DATA-CHG                │ AMEM                    │ VMEM      │
-  │ the device and the type │ 32 Voice Effect records │ 32 voices │
-  │ 7 B                     │ 1,128 B                 │ 4,104 B   │
-  │ 19 4D 00                │ 32x35 B                 │ 32x128 B  │
-  └─────────────────────────┴─────────────────────────┴───────────┘
+  ┌─────────────────────────┬─────────────────────────┬────────────┐
+  │ DATA-CHG                │ AMEM                    │ VMEM       │
+  │ the device and the type │ 32 Voice Effect records │ 32 voices  │
+  │ 7 B                     │ 1,128 B                 │ 4,104 B    │
+  │ 19 4D 00                │ 32 × 35 B               │ 32 × 128 B │
+  └─────────────────────────┴─────────────────────────┴────────────┘
    @0                        @7                        @1,135
 
-  ┌─────────────────────────┬─────────────────────────┬───────────┐
-  │ DATA-CHG                │ AMEM                    │ VMEM      │
-  │ the device and the type │ 32 Voice Effect records │ 32 voices │
-  │ 7 B                     │ 1,128 B                 │ 4,104 B   │
-  │ 19 4D 01                │ 32x35 B                 │ 32x128 B  │
-  └─────────────────────────┴─────────────────────────┴───────────┘
+  ┌─────────────────────────┬─────────────────────────┬────────────┐
+  │ DATA-CHG                │ AMEM                    │ VMEM       │
+  │ the device and the type │ 32 Voice Effect records │ 32 voices  │
+  │ 7 B                     │ 1,128 B                 │ 4,104 B    │
+  │ 19 4D 01                │ 32 × 35 B               │ 32 × 128 B │
+  └─────────────────────────┴─────────────────────────┴────────────┘
    @5,239                    @5,246                    @6,374
 
-  ┌─────────────────┐
-  │ PMEM            │
-  │ 32 performances │
-  │ 1,650 B         │
-  │ 32x51 B         │
-  └─────────────────┘
+  ┌──────────────────┐
+  │ PMEM             │
+  │ 32 performances  │
+  │ 1,650 B          │
+  │ 32 × 51 B + name │
+  └──────────────────┘
    @10,478
-  (AMEM is the Voice Effect data of the 32 voices in the VMEM beside it: the DX7 voice, and what a
-  DX7II adds to it)
+  (AMEM and VMEM of a half pair slot by slot: `instrument memory map`)
 ```
 
 ### A voice, in full
