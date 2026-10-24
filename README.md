@@ -151,7 +151,8 @@ the reference (help and the generated documents)
 └─ docs             print a generated reference document (markdown, to stdout)
    ├─ cli           the whole command line (docs/tool/cli.md)
    ├─ algorithms    the 32 algorithms (docs/instrument/dx7-algorithms.md)
-   └─ tuning        the intonations (docs/instrument/microtuning.md)
+   ├─ tuning        the intonations (docs/instrument/microtuning.md)
+   └─ check         check the three generated documents against their files (exit 1 if stale)
 ```
 
 ## What it prints
