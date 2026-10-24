@@ -6,7 +6,7 @@
 > **COMING SOON — there is no source code in this repository yet**
 >
 > The tool is being written. The code lands here with the **first public release,
-> planned for November 2026 and at the latest December 2026**.
+> by December 2027** — the previous plan said November 2026.
 >
 > Until then this page is the project: what the tool is for, the shape of its command
 > line, and the real output of every verb. The runs below are not a mock-up and not a
