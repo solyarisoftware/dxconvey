@@ -313,23 +313,10 @@ each one, the fourteen axes and the four bands of every sentence:
 
 ```console
 $ dxconvey -q instrument description
-piano
-keys
-organ
-bell
-mallet
-percussion
-pluck
-bass
-strings
-brass
-reed
-pipe
-voice
-lead
-pad
-fx
-synth
+SOUND TYPE · the tag the voice imitates, with its subtype and the confidence
+BEHAVIOUR · one phrase of what the voice does, in the fourteen axes
+rule · which reading of the cell table fired, in that reading's own words
+why · the byte behind every adjective, one sentence per group
 ```
 
 ### Searching by the tag
@@ -970,6 +957,9 @@ to program it.
 ```console
 $ dxconvey instrument algorithm 5
 the six-operator line · [both]
+  the factory voices named in these notes are the 32 of Yamaha's DX7 ROM1A cartridge; the DX7II's
+  VRC banks reuse several of those names with other contents
+
   algorithm 5  ·  three 2-operator pairs
     carriers    OP1 OP3 OP5
     modulators  OP2 → OP1 · OP4 → OP3 · OP6 → OP5
@@ -1052,6 +1042,9 @@ sustain     -  (held)              2.00 s
 R4         50  L4  0   -  61.3 dB  850 ms
 note-on: the level jumps at once to -50 dB, where the first rise starts
 total 3.70 s (key up at 2.85 s)
+
+  the times are the chip's envelope model (Dexed / msfa), not a measurement of this instrument
+  docs/instrument/envelope-generator.md §9
 ```
 
 
