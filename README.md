@@ -196,10 +196,11 @@ alienazi.syx  --  12,128 bytes
   not in this dump: micro tuning, fractional key scaling, system set-up
 
   performances    32 programmed  (25 dual, 5 single, 2 split)
-  tuning           5 leave equal temperament
   voices          59 distinct  out of 64 slots: 60 programmed, 4 factory INIT, 1 duplicate content
   used            43 voices  are referenced by the performances (17 programmed voices are not)
-  DX7II only      57 of 64 voice slots carry additional parameters: on a DX7 they lose something
+  DX7II only      57 of 64 voice slots carry additional parameters
+  on a DX7        54 lossy · 1 close · 5 exact, of the 60 programmed voices
+  tuning           5 leave equal temperament
 ```
 
 ### The dump, as it is laid out
