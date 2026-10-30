@@ -414,7 +414,8 @@ repeats. A word that is neither is refused (exit 2, with the page that lists bot
 levels), and a filter that matched nothing is a fact, not an error (exit 1).
 
 `used` counts performances referring to that slot. `same as slot` identifies
-identical voice and supplement contents, not merely identical names.
+identical voice and supplement contents, not merely identical names. A blank
+duplicate-reference cell means no duplicate; zero usage counts stay explicit.
 
 ```console
 $ dxconvey show voice alienazi.syx --type pad
@@ -422,37 +423,37 @@ $ dxconvey show voice alienazi.syx --type pad
 
 slot name        sound type    alg  used  on a DX7  same as slot
 ──── ──────────  ────────────  ───  ────  ────────  ────────────
-   2 Respiri     pad            11     0  lossy     -
-   4 Pulsazioni  pad            21     2  lossy     -
-   5 Alien2000   pad            11     0  lossy     -
-   6 SpacePig 3  pad            32     0  lossy     -
+   2 Respiri     pad            11     0  lossy
+   4 Pulsazioni  pad            21     2  lossy
+   5 Alien2000   pad            11     0  lossy
+   6 SpacePig 3  pad            32     0  lossy
    9 Framura84   pad             2     1  lossy     24
-  11 OpenSpace   pad             5     1  lossy     -
-  13 Monique     pad             5     2  lossy     -
-  17 NubiVacche  pad             5     1  lossy     -
-  18 Gare 2000   pad            17     0  lossy     -
-  19 BlackNoise  pad            27     0  lossy     -
-  20 PazzaOrch1  pad            12     1  lossy     -
-  21 Subatomo    pad            12     1  lossy     -
-  22 PazzaOrch2  pad            12     1  lossy     -
+  11 OpenSpace   pad             5     1  lossy
+  13 Monique     pad             5     2  lossy
+  17 NubiVacche  pad             5     1  lossy
+  18 Gare 2000   pad            17     0  lossy
+  19 BlackNoise  pad            27     0  lossy
+  20 PazzaOrch1  pad            12     1  lossy
+  21 Subatomo    pad            12     1  lossy
+  22 PazzaOrch2  pad            12     1  lossy
   24 Framura84   pad             2     0  lossy     9
-  26 RadioBot    pad             5     0  lossy     -
-  27 Penombra    pad             5     0  lossy     -
-  28 Incatata    pad            25     1  lossy     -
-  29 Sabato20    pad             4     1  lossy     -
-  30 VentiLenti  pad             6     0  lossy     -
-  32 reversNois  pad            27     0  lossy     -
-  33 carnivori   pad             9     1  lossy     -
-  36 GiorgiCoro  pad             5     3  lossy     -
-  37 ApiCattive  pad             1     1  lossy     -
-  40 DownLife    pad             3     1  lossy     -
-  44 De Chirico  pad            20     1  lossy     -
-  45 moschini    pad             5     1  lossy     -
-  49 lievottoni  pad             5     1  lossy     -
-  54 Dedalo      pad            15     1  lossy     -
-  55 AcquAfrica  pad             5     2  lossy     -
-  57 choralarch  pad             5     2  lossy     -
-  60 scherzavo   pad             5     1  lossy     -
+  26 RadioBot    pad             5     0  lossy
+  27 Penombra    pad             5     0  lossy
+  28 Incatata    pad            25     1  lossy
+  29 Sabato20    pad             4     1  lossy
+  30 VentiLenti  pad             6     0  lossy
+  32 reversNois  pad            27     0  lossy
+  33 carnivori   pad             9     1  lossy
+  36 GiorgiCoro  pad             5     3  lossy
+  37 ApiCattive  pad             1     1  lossy
+  40 DownLife    pad             3     1  lossy
+  44 De Chirico  pad            20     1  lossy
+  45 moschini    pad             5     1  lossy
+  49 lievottoni  pad             5     1  lossy
+  54 Dedalo      pad            15     1  lossy
+  55 AcquAfrica  pad             5     2  lossy
+  57 choralarch  pad             5     2  lossy
+  60 scherzavo   pad             5     1  lossy
 ```
 
 ### The envelopes of that voice, drawn
@@ -593,6 +594,8 @@ OP1     5.4 ms     0.0 ms     405 ms     918 ms  does not reach silence
 A performance combines one or two voices across the keyboard. The list shows
 their slots and names, key mode, detune, stored balance and note shift. Active
 alternate tunings appear below their rows; `--sheet` explains the full setup.
+Neutral detune, balance and note shifts are left blank to highlight changes;
+partial shifts such as `0/+24` retain both values. Sheets keep explicit settings.
 
 ```console
 $ dxconvey show performance alienazi.syx
@@ -600,48 +603,49 @@ $ dxconvey show performance alienazi.syx
 
 slot name                  mode      voice A        voice B        detune  balance  shift A/B
 ──── ────────────────────  ────────  ─────────────  ─────────────  ──────  ───────  ─────────
-   1 PitecantropusErectus  dual      31 Orca Troia  23 Carlo Levi       0        0        0/0
-   2 Antropos spaces       dual       4 Pulsazioni  34 soft wave        0        0      0/+24
-   3 sideral space bytes   split C4   7 SpacePig 2  10 SpacePig 5       3        0      +12/0
+   1 PitecantropusErectus  dual      31 Orca Troia  23 Carlo Levi
+   2 Antropos spaces       dual       4 Pulsazioni  34 soft wave                        0/+24
+   3 sideral space bytes   split C4   7 SpacePig 2  10 SpacePig 5       3               +12/0
    4 carnivori stupendi    dual      38 stupenda    33 carnivori        6       +1      +12/0
-   5 Particelle Subatomo   dual      21 Subatomo    21 Subatomo         6        0      0/+12
-   6 Stati Alterati        dual      35 TIMEWARP    35 TIMEWARP         7        0    -24/-12
+   5 Particelle Subatomo   dual      21 Subatomo    21 Subatomo         6               0/+12
+   6 Stati Alterati        dual      35 TIMEWARP    35 TIMEWARP         7             -24/-12
    7 Random crazy sinfony  dual      20 PazzaOrch1  22 PazzaOrch2       4       +6      -2/+2
      tuning 1/4 tone preset 10 · root G · voice B
-   8 DeChiricoGialloeNero  dual      44 De Chirico  13 Monique          0        0        0/0
-   9 non morto non vivo    dual      64 OrzoWay     60 scherzavo        0        0        0/0
-  10 Apocalipse noise      single    59 apocalipse  -                   -        0          0
-  11 Black woman walk      dual       4 Pulsazioni  55 AcquAfrica       4       +3        0/0
+   8 DeChiricoGialloeNero  dual      44 De Chirico  13 Monique
+   9 non morto non vivo    dual      64 OrzoWay     60 scherzavo
+  10 Apocalipse noise      single    59 apocalipse  -
+  11 Black woman walk      dual       4 Pulsazioni  55 AcquAfrica       4       +3
   12 voci dal sottosuolo   dual      36 GiorgiCoro  40 DownLife         2       +2      -24/0
-  13 Lamenti della Terra   dual      15 Laments 3   14 Laments 2        2        0        0/0
+  13 Lamenti della Terra   dual      15 Laments 3   14 Laments 2        2
      tuning 1/4 tone preset 10 · root C · voices A+B
-  14 choralarch Entropia   dual      57 choralarch  36 GiorgiCoro       2        0      0/-16
-  15 extrasensorial act    dual      29 Sabato20    54 Dedalo           0       +1      -12/0
+  14 choralarch Entropia   dual      57 choralarch  36 GiorgiCoro       2               0/-16
+  15 extrasensorial act    dual      29 Sabato20    54 Dedalo                   +1      -12/0
      tuning 1/4 tone preset 10 · root C · voices A+B
-  16 nubivacche percosse   dual      17 NubiVacche   1 Tabla-3          0        0        0/0
-  17 Time Warp             dual      42 TimeWarp1   42 TimeWarp1        0        0      0/-12
-  18 Nuvole serene         split C4  16 Nuvole 2    63 Nuvole 3         0        0        0/0
+  16 nubivacche percosse   dual      17 NubiVacche   1 Tabla-3
+  17 Time Warp             dual      42 TimeWarp1   42 TimeWarp1                        0/-12
+  18 Nuvole serene         split C4  16 Nuvole 2    63 Nuvole 3
      tuning 1/4 tone preset 10 · root C · voices A+B
-  19 Incantata, non scema  single    28 Incatata    -                   -      -14          0
-  20 lieviottoni           single    49 lievottoni  -                   -        0          0
-  21 architetti cosmici    single    57 choralarch  -                   -       +2          0
+  19 Incantata, non scema  single    28 Incatata    -                          -14
+  20 lieviottoni           single    49 lievottoni  -
+  21 architetti cosmici    single    57 choralarch  -                           +2
      tuning 1/4 tone preset 10 · root C · voice A
-  22 Fabrizia a Framura    dual      13 Monique      9 Framura84        0      +10        0/0
-  23 Tanganika Free        dual      55 AcquAfrica  10 SpacePig 5       5       +7        0/0
-  24 sono solo insetti     dual      45 moschini    43 Bordone..        5       -3        0/0
-  25 Enterprise Messages   dual      48 Mr. Spock   10 SpacePig 5       3       -5        0/0
-  26 pesci del mar salato  dual      34 soft wave    7 SpacePig 2       0       +7        0/0
+  22 Fabrizia a Framura    dual      13 Monique      9 Framura84               +10
+  23 Tanganika Free        dual      55 AcquAfrica  10 SpacePig 5       5       +7
+  24 sono solo insetti     dual      45 moschini    43 Bordone..        5       -3
+  25 Enterprise Messages   dual      48 Mr. Spock   10 SpacePig 5       3       -5
+  26 pesci del mar salato  dual      34 soft wave    7 SpacePig 2               +7
   27 Colossal sinphony     dual      31 Orca Troia  61 Orca Vacca       3       -5      0/-12
-  28 P. Gabriel cymbals    dual      51 CrashPiano  36 GiorgiCoro       0       +2        0/0
-  29 Terzo mondo           dual      46 TerzoMondo  46 TerzoMondo       1        0    +19/+12
-  30 TESTOII by Tsukamoto  dual      11 OpenSpace   37 ApiCattive       7        0      0/+24
-  31 Tsukamoto I           dual      56 B.Maderna   52 FidatiDiMe       0       -6        0/0
-  32 Tsukamoto II          single    56 B.Maderna   -                   -        0          0
+  28 P. Gabriel cymbals    dual      51 CrashPiano  36 GiorgiCoro               +2
+  29 Terzo mondo           dual      46 TerzoMondo  46 TerzoMondo       1             +19/+12
+  30 TESTOII by Tsukamoto  dual      11 OpenSpace   37 ApiCattive       7               0/+24
+  31 Tsukamoto I           dual      56 B.Maderna   52 FidatiDiMe               -6
+  32 Tsukamoto II          single    56 B.Maderna   -
 
 detune: dual detune between voice A and voice B (0-7) · balance: volume of
 voice A against voice B (-50..+50) · shift A/B: note shift of each voice in
-semitones · split C4: voice B starts at that key · a single plays voice A
-alone, so it has no voice B and no detune
+semitones · blank setting: zero, or detune not applicable in single mode ·
+split C4: voice B starts at that key · a single plays voice A alone, so it
+has no voice B and no detune
 ```
 
 ### A performance, drawn
