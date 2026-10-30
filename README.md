@@ -56,9 +56,10 @@ DX7II voice       = DX7 voice (128 bytes) + 35 bytes a DX7 cannot hold
 DX7II performance = Voice A + Voice B + performance data
 ```
 
-The DX7II kept the voice of its predecessor untouched and put its own parameters
-beside it: on a DX7 those thirty-five bytes have nowhere to go, so a porting gives
-something up **voice by voice**, and the register says which. The performance layer —
+The DX7II keeps additional parameters beside the DX7 voice data. Some settings
+already fit the DX7, some need adaptation, and others cannot be stored in its
+voice file. The verdict is **exact**, **close** or **lossy**, voice by voice;
+carrying additional settings does not automatically mean losing them. The performance layer —
 single, dual or split, the detune, the balance, the split point, the slider
 assignment, the tuning — is a third object that a DX7 does not have, and it points to
 its two voices by slot number: extract both voices, drop their thirty-five bytes, and
@@ -74,13 +75,28 @@ never changes the subject.
 The verbs answer five kinds of question: what is in a dump (`show`, `search`), what the
 machine does with no file at all (`instrument`), what a porting to the DX7 costs
 (`convert`), how a software target plays a performance (`recipe`), and how the tool
-itself works (`help`, `docs`). The map is a command, not this table — `help map` lists
+itself works (`about`, `help`, `docs`). The map is a command, not this table — `help map` lists
 every verb and every kind, and `--tree` draws it (the next block).
 
 Two shortcuts, because they are the two questions asked most: `dxconvey FILE.syx` is
 `show summary FILE.syx`, and `dxconvey convert FILE.syx` writes the DX7 banks in a folder
 beside the dump. `converse`, a natural-language interface to instrument data, is a later
 goal; it is **not** part of the current CLI.
+
+For reading a dump, each question has one answer:
+
+| command | what it answers |
+| --- | --- |
+| `show FILE` | the summary, without listing entities |
+| `show all FILE` | the performance and voice lists, instrument data and SysEx messages |
+| `show voice FILE` / `show performance FILE` | one filtered list of voices or performances |
+| `show voice FILE --sheet` / `show performance FILE --sheet` | the selected entity's construction and stored settings |
+| `show portability FILE` | what a DX7 voice file preserves, adapts or omits |
+
+The lists have one shape, and the sheets are complete: no extra depth flag is
+needed. A performance sheet describes the performance, not an appendix of voice
+sheets; follow its voice slots to read those voices individually. `-q`, before
+the verb, omits headings and explanations.
 
 ### The shape of the command line
 
@@ -98,11 +114,12 @@ page of a kind, and `dxconvey help VERB KIND` prints the same one.
 a dump (takes one .syx file)
 └─ show             read a dump: the numbers of it, or the sheets of one kind of entity
    ├─ summary       the numbers: what the file is, what it holds and what it lacks
-   ├─ all           the numbers and one line per entity: every performance and every voice
-   ├─ voice         one line per voice: slot, name, sound type, algorithm, carriers, release, and
-                    what a DX7 keeps
-   ├─ performance   one line per performance: slot, name, key mode, and the two voices with their
-                    algorithms
+   ├─ all           the complete inventory: performances, voices, instrument data and SysEx messages
+   ├─ voice         one line per voice: slot, name, sound type, algorithm, usage, what a DX7 keeps
+                    and duplicate slots
+   ├─ portability   what a DX7 voice file keeps, changes or cannot carry from each voice
+   ├─ performance   one line per performance: slot, name, key mode, the two voices, detune, balance
+                    and note shift
    ├─ sysex         the SysEx messages of one dump: one box per message, with offsets
    ├─ counts        one count per dump, for a list of them: how much a set of banks holds
    ├─ micro-tuning  list the records of micro-tuning in a dump
@@ -153,8 +170,9 @@ a search over many dumps (takes a list)
 └─ search           which voices of a set of dumps answer a query: a tag, a name, the words of the
                     behaviour
 
-the reference (help and the generated documents)
+the reference (help, the generated documents and the tool itself)
 ├─ help             the help of the tool, of one command, or the map of all of them
+├─ about            who wrote this tool, where it lives, and how to support it
 └─ docs             print a generated reference document (markdown, to stdout)
    ├─ cli           the whole command line (docs/tool/cli.md)
    ├─ algorithms    the 32 algorithms (docs/instrument/dx7-algorithms.md)
@@ -169,7 +187,7 @@ terminal. The code is not in this repository yet — it lands with the first rel
 the numbers are not a mock-up: they are the tool reading one dump, `alienazi.syx`, the
 DX7II All-Data of the package published here
 ([alienazi.zip](https://solyaris.altervista.org/dx7iipatches/alienazi.zip)): 64 voices,
-32 performances, and the 60 DX7 voices the porting makes of them. That is the same bank
+32 performances, and 60 programmed voices among the 64 voice slots. That is the same bank
 the downloadable package was built from, so every answer below is about a file the
 reader can hold.
 
@@ -185,8 +203,8 @@ that has the block elements and not the dots.
 
 ### The dump, at a glance
 
-One line per question: what the file is, what it holds, and what a DX7 would
-lose.
+One line per question: what the file is, what it holds, and how its programmed
+voices transfer to a DX7 voice file.
 
 ```console
 $ dxconvey show summary alienazi.syx
@@ -241,9 +259,9 @@ $ dxconvey show sysex alienazi.syx
 ### A voice, in full
 
 One voice is six operators: the sheet says the routing, the touch, the controllers
-and what a DX7 keeps, then the timing of every operator. `--details` adds the four
-rates and four levels of each, and `--plots` draws the six envelopes on one time
-axis. This is the first voice of `alienazi.syx`.
+and what a DX7 keeps, the four rates and levels of each operator, and its timing.
+`--plots` draws the six envelopes on one time axis. This is the first voice of
+`alienazi.syx`.
 
 ```console
 $ dxconvey show voice alienazi.syx --slot 1 --sheet
@@ -251,33 +269,47 @@ VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
 SOUND TYPE percussion/drum · name-only
 BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
+
 algorithm  10 · a 3-operator stack with feedback plus two summed modulators
 carriers   OP1 OP4 · 2 of 6 reach the output
 feedback   OP3 on itself
-┌─────┐
-│ OP3 │◀─╮
-└──┬──┴──╯
-   │
-┌──▼──┐     ┌─────┐  ┌─────┐
-│ OP2 │     │ OP5 │  │ OP6 │
-└──┬──┘     └──┬──┘  └──┬──┘
-   │           ├────────┘
-┌──▼──┐     ┌──▼──┐
-│ OP1 │     │ OP4 │
-└──┬──┘     └──┬──┘
-   └─────┬─────┘
-         ▼
-      OUTPUT
 
-TOUCH      MIDI velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5
-           (modulators brighter), OP3 KVS 6 (modulators brighter)
-CONTROLS   mod wheel: EG bias 64
-CONTROLS   after touch: pitch 5, pitch bias 24
-timing     C4 · key up at 2.66 s, one second after the slowest carrier
-           reaches its sustain level; programmed levels only, live
-           velocity/controller offsets not applied
-carrier EG OP1 at C4: key up 2.66 s, does not reach silence
-carrier EG OP4 at C4: key up 2.66 s, silent at key up
+           ┌─────┐
+           │ OP3 │◀─╮
+           └──┬──┴──╯
+              │
+           ┌──▼──┐     ┌─────┐  ┌─────┐
+           │ OP2 │     │ OP5 │  │ OP6 │
+           └──┬──┘     └──┬──┘  └──┬──┘
+              │           ├────────┘
+           ┌──▼──┐     ┌──▼──┐
+           │ OP1 │     │ OP4 │
+           └──┬──┘     └──┬──┘
+              └─────┬─────┘
+                    ▼
+                 OUTPUT
+
+MIDI response
+           velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5 (modulators
+           brighter), OP3 KVS 6 (modulators brighter)
+           mod wheel: EG bias 64
+           after touch: pitch 5, pitch bias 24
+
+timing     key up one second after the slowest carrier reaches its sustain
+           level; programmed levels only, live velocity/controller offsets
+           not applied
+           note-on to silence
+
+           ─ key held · ╌ release · ↓ key-up · ┤ silence · ∞ no silence
+           intervals, not amplitude; times on the right are from note-on
+           positions rounded to the nearest cell
+
+carriers   C4 · key up 2.66 s
+           0       1       2       3       4       5 s
+           ├───────┼───────┼───────┼───────┼───────┤
+       OP1 ─────────────────────↓╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌∞  does not reach silence
+       OP4 ─────────────┤                             1.66 s
+
 envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
 op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
 OP6  modulator d1   5.00   +4     66   0  69  0 49  0    99 11 96  0   0
@@ -296,6 +328,53 @@ EG bias    mod wheel can offset the levels live: the table is the rest
            position
 portability lossy · remapped AMS; 4 settings not in DX7 voice file (after
             touch, mod wheel, pitch bend)
+
+operator timing at C4; programmed levels, one key-up at 2.66 s for all six
+op          R1         R2         R3         R4  after key up
+OP6     5.8 ms     2.66 s          - 3 min 48 s  silence in 3 min 48 s
+OP5     0.4 ms     0.0 ms     200 ms 3 min 30 s  silence in 3 min 30 s
+OP4     1.9 ms     0.0 ms     1.66 s     0.0 ms  silent at key up
+OP3     0.1 ms      54 ms     253 ms     0.0 ms  silent at key up
+OP2     5.0 ms     0.0 ms     6.0 ms     3.62 s  silence in 3.62 s
+OP1     5.4 ms     0.0 ms     405 ms     918 ms  does not reach silence
+```
+
+### What changes on a DX7
+
+The voice list gives a verdict; `show portability` explains it. Settings that
+already fit are kept apart from adapted values and settings missing from the
+DX7 voice file. Controller settings may need separate DX7 function settings;
+loading the converted voice alone does not restore them.
+
+```console
+$ dxconvey show portability alienazi.syx --slot 1
+VOICE 1 · Tabla-3
+DX7II → DX7 voice file
+
+portability lossy
+
+unchanged
+  amplitude modulation sensitivity (AMS)
+    How strongly each operator responds to LFO amplitude modulation.
+    OP1: 1 · OP2: 2 · OP3: 2
+    These settings already fit the DX7's range; no change is needed.
+
+not included in the DX7 voice file
+  pitch bend
+    The DX7II uses pitch bend mode high.
+
+  mod wheel
+    The wheel controls EG bias, changing envelope levels.
+    EG bias range  64
+
+  after touch
+    Key pressure controls pitch modulation and pitch bias.
+    pitch modulation range   5
+    pitch bias range        24
+
+Loading the converted voice alone will not restore these settings or
+controller responses. The values above are parameter settings, not measured
+changes in volume or pitch.
 ```
 
 ### What a sound is called
@@ -334,39 +413,46 @@ of the seventeen names, or one of the eight coarser words a sound library search
 repeats. A word that is neither is refused (exit 2, with the page that lists both
 levels), and a filter that matched nothing is a fact, not an error (exit 1).
 
+`used` counts performances referring to that slot. `same as slot` identifies
+identical voice and supplement contents, not merely identical names.
+
 ```console
-$ dxconvey -q show voice alienazi.syx --type pad
-2   Respiri          pad         alg 11  carriers 2  R4 20 (OP4)  on a DX7: lossy
-4   Pulsazioni       pad         alg 21  carriers 4  R4 18 (OP5)  on a DX7: lossy
-5   Alien2000        pad         alg 11  carriers 2  R4 22 (OP4)  on a DX7: lossy
-6   SpacePig 3       pad         alg 32  carriers 6  R4 25 (OP1)  on a DX7: lossy
-9   Framura84        pad         alg  2  carriers 2  R4 35 (OP3)  on a DX7: lossy
-11  OpenSpace        pad         alg  5  carriers 3  R4 23 (OP1)  on a DX7: lossy
-13  Monique          pad         alg  5  carriers 3  R4 35 (OP5)  on a DX7: lossy
-17  NubiVacche       pad         alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
-18  Gare 2000        pad         alg 17  carriers 1  R4 20 (OP1)  on a DX7: lossy
-19  BlackNoise       pad         alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
-20  PazzaOrch1       pad         alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
-21  Subatomo         pad         alg 12  carriers 2  R4  0 (OP3)  on a DX7: lossy
-22  PazzaOrch2       pad         alg 12  carriers 2  R4 10 (OP3)  on a DX7: lossy
-24  Framura84        pad         alg  2  carriers 2  R4 35 (OP3)  on a DX7: lossy
-26  RadioBot         pad         alg  5  carriers 3  R4 32 (OP5)  on a DX7: lossy
-27  Penombra         pad         alg  5  carriers 3  R4  8 (OP1)  on a DX7: lossy
-28  Incatata         pad         alg 25  carriers 5  R4  0 (OP1)  on a DX7: lossy
-29  Sabato20         pad         alg  4  carriers 2  R4 17 (OP1)  on a DX7: lossy
-30  VentiLenti       pad         alg  6  carriers 3  R4 27 (OP5)  on a DX7: lossy
-32  reversNois       pad         alg 27  carriers 3  R4 23 (OP2)  on a DX7: lossy
-33  carnivori        pad         alg  9  carriers 2  R4  8 (OP3)  on a DX7: lossy
-36  GiorgiCoro       pad         alg  5  carriers 3  R4 30 (OP1)  on a DX7: lossy
-37  ApiCattive       pad         alg  1  carriers 2  R4 15 (OP3)  on a DX7: lossy
-40  DownLife         pad         alg  3  carriers 2  R4  0 (OP4)  on a DX7: lossy
-44  De Chirico       pad         alg 20  carriers 3  R4 24 (OP4)  on a DX7: lossy
-45  moschini         pad         alg  5  carriers 3  R4  0 (OP5)  on a DX7: lossy
-49  lievottoni       pad         alg  5  carriers 3  R4  0 (OP1)  on a DX7: lossy
-54  Dedalo           pad         alg 15  carriers 2  R4  8 (OP1)  on a DX7: lossy
-55  AcquAfrica       pad         alg  5  carriers 3  R4 17 (OP3)  on a DX7: lossy
-57  choralarch       pad         alg  5  carriers 3  R4 11 (OP1)  on a DX7: lossy
-60  scherzavo        pad         alg  5  carriers 3  R4  7 (OP1)  on a DX7: lossy
+$ dxconvey show voice alienazi.syx --type pad
+31 voices  ·  31 lossy  ·  21 referenced by the performances
+
+slot name        sound type    alg  used  on a DX7  same as slot
+──── ──────────  ────────────  ───  ────  ────────  ────────────
+   2 Respiri     pad            11     0  lossy     -
+   4 Pulsazioni  pad            21     2  lossy     -
+   5 Alien2000   pad            11     0  lossy     -
+   6 SpacePig 3  pad            32     0  lossy     -
+   9 Framura84   pad             2     1  lossy     24
+  11 OpenSpace   pad             5     1  lossy     -
+  13 Monique     pad             5     2  lossy     -
+  17 NubiVacche  pad             5     1  lossy     -
+  18 Gare 2000   pad            17     0  lossy     -
+  19 BlackNoise  pad            27     0  lossy     -
+  20 PazzaOrch1  pad            12     1  lossy     -
+  21 Subatomo    pad            12     1  lossy     -
+  22 PazzaOrch2  pad            12     1  lossy     -
+  24 Framura84   pad             2     0  lossy     9
+  26 RadioBot    pad             5     0  lossy     -
+  27 Penombra    pad             5     0  lossy     -
+  28 Incatata    pad            25     1  lossy     -
+  29 Sabato20    pad             4     1  lossy     -
+  30 VentiLenti  pad             6     0  lossy     -
+  32 reversNois  pad            27     0  lossy     -
+  33 carnivori   pad             9     1  lossy     -
+  36 GiorgiCoro  pad             5     3  lossy     -
+  37 ApiCattive  pad             1     1  lossy     -
+  40 DownLife    pad             3     1  lossy     -
+  44 De Chirico  pad            20     1  lossy     -
+  45 moschini    pad             5     1  lossy     -
+  49 lievottoni  pad             5     1  lossy     -
+  54 Dedalo      pad            15     1  lossy     -
+  55 AcquAfrica  pad             5     2  lossy     -
+  57 choralarch  pad             5     2  lossy     -
+  60 scherzavo   pad             5     1  lossy     -
 ```
 
 ### The envelopes of that voice, drawn
@@ -384,33 +470,47 @@ VOICE 1 · Tabla-3
 ────────────────────────────────────────────────────────────────────
 SOUND TYPE percussion/drum · name-only
 BEHAVIOUR  decays, no end, harmonic, bright, two layers, pitch falling
+
 algorithm  10 · a 3-operator stack with feedback plus two summed modulators
 carriers   OP1 OP4 · 2 of 6 reach the output
 feedback   OP3 on itself
-┌─────┐
-│ OP3 │◀─╮
-└──┬──┴──╯
-   │
-┌──▼──┐     ┌─────┐  ┌─────┐
-│ OP2 │     │ OP5 │  │ OP6 │
-└──┬──┘     └──┬──┘  └──┬──┘
-   │           ├────────┘
-┌──▼──┐     ┌──▼──┐
-│ OP1 │     │ OP4 │
-└──┬──┘     └──┬──┘
-   └─────┬─────┘
-         ▼
-      OUTPUT
 
-TOUCH      MIDI velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5
-           (modulators brighter), OP3 KVS 6 (modulators brighter)
-CONTROLS   mod wheel: EG bias 64
-CONTROLS   after touch: pitch 5, pitch bias 24
-timing     C4 · key up at 2.66 s, one second after the slowest carrier
-           reaches its sustain level; programmed levels only, live
-           velocity/controller offsets not applied
-carrier EG OP1 at C4: key up 2.66 s, does not reach silence
-carrier EG OP4 at C4: key up 2.66 s, silent at key up
+           ┌─────┐
+           │ OP3 │◀─╮
+           └──┬──┴──╯
+              │
+           ┌──▼──┐     ┌─────┐  ┌─────┐
+           │ OP2 │     │ OP5 │  │ OP6 │
+           └──┬──┘     └──┬──┘  └──┬──┘
+              │           ├────────┘
+           ┌──▼──┐     ┌──▼──┐
+           │ OP1 │     │ OP4 │
+           └──┬──┘     └──┬──┘
+              └─────┬─────┘
+                    ▼
+                 OUTPUT
+
+MIDI response
+           velocity OP1 OP4 KVS 1 (carriers louder), OP2 KVS 5 (modulators
+           brighter), OP3 KVS 6 (modulators brighter)
+           mod wheel: EG bias 64
+           after touch: pitch 5, pitch bias 24
+
+timing     key up one second after the slowest carrier reaches its sustain
+           level; programmed levels only, live velocity/controller offsets
+           not applied
+           note-on to silence
+
+           ─ key held · ╌ release · ↓ key-up · ┤ silence · ∞ no silence
+           intervals, not amplitude; times on the right are from note-on
+           positions rounded to the nearest cell
+
+carriers   C4 · key up 2.66 s
+           0       1       2       3       4       5 s
+           ├───────┼───────┼───────┼───────┼───────┤
+       OP1 ─────────────────────↓╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌∞  does not reach silence
+       OP4 ─────────────┤                             1.66 s
+
 envelopes  R = rates 0-99 (0 = slowest) · L = levels 0-99 (0 = silence)
 op   role          ratio  det  level vel  R1 R2 R3 R4    L1 L2 L3 L4  RS
 OP6  modulator d1   5.00   +4     66   0  69  0 49  0    99 11 96  0   0
@@ -433,7 +533,8 @@ portability lossy · remapped AMS; 4 settings not in DX7 voice file (after
 figures    the six operator envelopes at C4, one figure each; the six
            figures share one time axis and one key-up, one second after the
            slowest carrier reaches its sustain level
-OP1 carrier                                         OP2 modulator d1
+────────────────────────────────────────────────────────────────────────────────────────────────────
+OP1 carrier                                         OP2 modulator · depth 1
   dB
    0┤..                              -               │.................................
  -20┤.'.                             -               │. L1=99                         -''--..
@@ -443,9 +544,9 @@ OP1 carrier                                         OP2 modulator d1
  -60┤.                               -  '''---..     │.                               -
  -80┤.                               -          ''   │.                               -
     │.                               -               │.                               -
-    └┴────┴──────────────────────────┴──────────┴─   └┴───────────────────────────────┴───────────┴
+    └↑────┴──────────────────────────↓──────────┴─   └↑───────────────────────────────↓───────────┴
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
-OP3 modulator d2                                    OP4 carrier
+OP3 modulator · depth 2                             OP4 carrier
   dB
    0┤                                -               │.-.                             -
  -20┤                                -               │.  '.                           -
@@ -455,9 +556,9 @@ OP3 modulator d2                                    OP4 carrier
  -60┤.'.                             -               │.            '-.                -
  -80┤. -. L3=0                       -               │.               -.   L3=0       -
     │.  '.........................................   │.                 '-.........................
-    └┴┴──┴───────────────────────────┴────────────   └┴───────────────────┴───────────┴────────────
+    └↑┴──┴───────────────────────────↓────────────   └↑───────────────────┴───────────↓────────────
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
-OP5 modulator d1                                    OP6 modulator d1
+OP5 modulator · depth 1                             OP6 modulator · depth 1
   dB
    0┤                                -               │                                -
  -20┤ L1=99                          -               │ L1=99                          - L2=11
@@ -467,60 +568,80 @@ OP5 modulator d1                                    OP6 modulator d1
  -60┤.                               -               │.                               -
  -80┤.                               -               │.                               -
     │.                               -               │.                               -
-    └┴─┴─────────────────────────────┴───────────┴   └┴───────────────────────────────┴───────────┴
+    └↑─┴─────────────────────────────↓───────────┴   └↑───────────────────────────────↓───────────┴
      0   0.5 s  1 s  1.5 s  2 s  2.5 s  3 s  3.5 s
 
-     ↑ note-on at once and ↓ note-off in the same column of every panel:
-     one time axis for the six, 3.69 s, the life of the voice
+     depth: number of modulation links to a carrier (longest path), not modulation amount
+     ↑ note-on (key down) at 0; ↓ note-off (key up) at 2.66 s; same columns in every panel
+     display window 3.69 s; one time axis for the six
+     programmed carrier envelopes: OP1 does not reach silence
      ▸ cut at the edge, because their releases outlast it: OP2 (3.62 s), OP5 (3 min 30 s),
        OP6 (3 min 48 s)
+
+operator timing at C4; programmed levels, one key-up at 2.66 s for all six
+op          R1         R2         R3         R4  after key up
+OP6     5.8 ms     2.66 s          - 3 min 48 s  silence in 3 min 48 s
+OP5     0.4 ms     0.0 ms     200 ms 3 min 30 s  silence in 3 min 30 s
+OP4     1.9 ms     0.0 ms     1.66 s     0.0 ms  silent at key up
+OP3     0.1 ms      54 ms     253 ms     0.0 ms  silent at key up
+OP2     5.0 ms     0.0 ms     6.0 ms     3.62 s  silence in 3.62 s
+OP1     5.4 ms     0.0 ms     405 ms     918 ms  does not reach silence
 ```
 
 ### The performances
 
-A performance is a pointer: two voices, a key mode, a split point, a tuning. One line
-each, and the first line counts what the bank holds.
+A performance combines one or two voices across the keyboard. The list shows
+their slots and names, key mode, detune, stored balance and note shift. Active
+alternate tunings appear below their rows; `--sheet` explains the full setup.
 
 ```console
 $ dxconvey show performance alienazi.syx
-32 performances  ·  25 dual, 5 single, 2 split  ·  5 with an intonation
-1    PitecantropusErectus     dual    A  31 Orca Troia   alg 16  B  23 Carlo Levi   alg  6  detune 0
-2    Antropos spaces          dual    A   4 Pulsazioni   alg 21  B  34 soft wave    alg  5  detune 0
-3    sideral space bytes      split   A   7 SpacePig 2   alg 32  B  10 SpacePig 5   alg 32  split C4
-4    carnivori stupendi       dual    A  38 stupenda     alg  4  B  33 carnivori    alg  9  detune 6
-5    Particelle Subatomo      dual    A  21 Subatomo     alg 12  B  21 Subatomo     alg 12  detune 6
-6    Stati Alterati           dual    A  35 TIMEWARP     alg  5  B  35 TIMEWARP     alg  5  detune 7
-7    Random crazy sinfony     dual    A  20 PazzaOrch1   alg 12  B  22 PazzaOrch2   alg 12  detune 4
+32 slots · 32 programmed · 25 dual, 5 single, 2 split
+
+slot name                  mode      voice A        voice B        detune  balance  shift A/B
+──── ────────────────────  ────────  ─────────────  ─────────────  ──────  ───────  ─────────
+   1 PitecantropusErectus  dual      31 Orca Troia  23 Carlo Levi       0        0        0/0
+   2 Antropos spaces       dual       4 Pulsazioni  34 soft wave        0        0      0/+24
+   3 sideral space bytes   split C4   7 SpacePig 2  10 SpacePig 5       3        0      +12/0
+   4 carnivori stupendi    dual      38 stupenda    33 carnivori        6       +1      +12/0
+   5 Particelle Subatomo   dual      21 Subatomo    21 Subatomo         6        0      0/+12
+   6 Stati Alterati        dual      35 TIMEWARP    35 TIMEWARP         7        0    -24/-12
+   7 Random crazy sinfony  dual      20 PazzaOrch1  22 PazzaOrch2       4       +6      -2/+2
      tuning 1/4 tone preset 10 · root G · voice B
-8    DeChiricoGialloeNero     dual    A  44 De Chirico   alg 20  B  13 Monique      alg  5  detune 0
-9    non morto non vivo       dual    A  64 OrzoWay      alg 10  B  60 scherzavo    alg  5  detune 0
-10   Apocalipse noise         single  A  59 apocalipse   alg 18  --
-11   Black woman walk         dual    A   4 Pulsazioni   alg 21  B  55 AcquAfrica   alg  5  detune 4
-12   voci dal sottosuolo      dual    A  36 GiorgiCoro   alg  5  B  40 DownLife     alg  3  detune 2
-13   Lamenti della Terra      dual    A  15 Laments 3    alg  3  B  14 Laments 2    alg  3  detune 2
+   8 DeChiricoGialloeNero  dual      44 De Chirico  13 Monique          0        0        0/0
+   9 non morto non vivo    dual      64 OrzoWay     60 scherzavo        0        0        0/0
+  10 Apocalipse noise      single    59 apocalipse  -                   -        0          0
+  11 Black woman walk      dual       4 Pulsazioni  55 AcquAfrica       4       +3        0/0
+  12 voci dal sottosuolo   dual      36 GiorgiCoro  40 DownLife         2       +2      -24/0
+  13 Lamenti della Terra   dual      15 Laments 3   14 Laments 2        2        0        0/0
      tuning 1/4 tone preset 10 · root C · voices A+B
-14   choralarch Entropia      dual    A  57 choralarch   alg  5  B  36 GiorgiCoro   alg  5  detune 2
-15   extrasensorial act       dual    A  29 Sabato20     alg  4  B  54 Dedalo       alg 15  detune 0
+  14 choralarch Entropia   dual      57 choralarch  36 GiorgiCoro       2        0      0/-16
+  15 extrasensorial act    dual      29 Sabato20    54 Dedalo           0       +1      -12/0
      tuning 1/4 tone preset 10 · root C · voices A+B
-16   nubivacche percosse      dual    A  17 NubiVacche   alg  5  B   1 Tabla-3      alg 10  detune 0
-17   Time Warp                dual    A  42 TimeWarp1    alg  5  B  42 TimeWarp1    alg  5  detune 0
-18   Nuvole serene            split   A  16 Nuvole 2     alg  5  B  63 Nuvole 3     alg  5  split C4
+  16 nubivacche percosse   dual      17 NubiVacche   1 Tabla-3          0        0        0/0
+  17 Time Warp             dual      42 TimeWarp1   42 TimeWarp1        0        0      0/-12
+  18 Nuvole serene         split C4  16 Nuvole 2    63 Nuvole 3         0        0        0/0
      tuning 1/4 tone preset 10 · root C · voices A+B
-19   Incantata, non scema     single  A  28 Incatata     alg 25  --
-20   lieviottoni              single  A  49 lievottoni   alg  5  --
-21   architetti cosmici       single  A  57 choralarch   alg  5  --
+  19 Incantata, non scema  single    28 Incatata    -                   -      -14          0
+  20 lieviottoni           single    49 lievottoni  -                   -        0          0
+  21 architetti cosmici    single    57 choralarch  -                   -       +2          0
      tuning 1/4 tone preset 10 · root C · voice A
-22   Fabrizia a Framura       dual    A  13 Monique      alg  5  B   9 Framura84    alg  2  detune 0
-23   Tanganika Free           dual    A  55 AcquAfrica   alg  5  B  10 SpacePig 5   alg 32  detune 5
-24   sono solo insetti        dual    A  45 moschini     alg  5  B  43 Bordone..    alg 11  detune 5
-25   Enterprise Messages      dual    A  48 Mr. Spock    alg 16  B  10 SpacePig 5   alg 32  detune 3
-26   pesci del mar salato     dual    A  34 soft wave    alg  5  B   7 SpacePig 2   alg 32  detune 0
-27   Colossal sinphony        dual    A  31 Orca Troia   alg 16  B  61 Orca Vacca   alg 17  detune 3
-28   P. Gabriel cymbals       dual    A  51 CrashPiano   alg 12  B  36 GiorgiCoro   alg  5  detune 0
-29   Terzo mondo              dual    A  46 TerzoMondo   alg 21  B  46 TerzoMondo   alg 21  detune 1
-30   TESTOII by Tsukamoto     dual    A  11 OpenSpace    alg  5  B  37 ApiCattive   alg  1  detune 7
-31   Tsukamoto I              dual    A  56 B.Maderna    alg 17  B  52 FidatiDiMe   alg  2  detune 0
-32   Tsukamoto II             single  A  56 B.Maderna    alg 17  --
+  22 Fabrizia a Framura    dual      13 Monique      9 Framura84        0      +10        0/0
+  23 Tanganika Free        dual      55 AcquAfrica  10 SpacePig 5       5       +7        0/0
+  24 sono solo insetti     dual      45 moschini    43 Bordone..        5       -3        0/0
+  25 Enterprise Messages   dual      48 Mr. Spock   10 SpacePig 5       3       -5        0/0
+  26 pesci del mar salato  dual      34 soft wave    7 SpacePig 2       0       +7        0/0
+  27 Colossal sinphony     dual      31 Orca Troia  61 Orca Vacca       3       -5      0/-12
+  28 P. Gabriel cymbals    dual      51 CrashPiano  36 GiorgiCoro       0       +2        0/0
+  29 Terzo mondo           dual      46 TerzoMondo  46 TerzoMondo       1        0    +19/+12
+  30 TESTOII by Tsukamoto  dual      11 OpenSpace   37 ApiCattive       7        0      0/+24
+  31 Tsukamoto I           dual      56 B.Maderna   52 FidatiDiMe       0       -6        0/0
+  32 Tsukamoto II          single    56 B.Maderna   -                   -        0          0
+
+detune: dual detune between voice A and voice B (0-7) · balance: volume of
+voice A against voice B (-50..+50) · shift A/B: note shift of each voice in
+semitones · split C4: voice B starts at that key · a single plays voice A
+alone, so it has no voice B and no detune
 ```
 
 ### A performance, drawn
@@ -538,19 +659,37 @@ SOUND A    strings · plausible
 SOUND B    strings · plausible
 BEHAVIOUR  A: slow swell, no end, harmonic, dark, rich, drift, pitch gliding
            B: slow swell, no end, harmonic, dark, rich, drift, no velocity
+
 voice A    16 Nuvole 2             algorithm  5  OP6 on itself
 voice B    63 Nuvole 3             algorithm  5  OP6 on itself
-MIDI response A mod wheel: pitch 32, amplitude 31, EG bias 99
-MIDI response A after touch: pitch 21, amplitude 45, EG bias 38
+
+MIDI response
+  A        mod wheel: pitch 32, amplitude 31, EG bias 99
+           after touch: pitch 21, amplitude 45, EG bias 38
+
 timing     each voice's key comes up one second after its slowest carrier
            reaches its sustain level; programmed levels only, live
            velocity/controller offsets not applied
-timing A   OP1 at C3: key up 48.78 s, does not reach silence
-timing A   OP3 at C3: key up 48.78 s, does not reach silence
-timing A   OP5 at C3: key up 48.78 s, does not reach silence
-timing B   OP1 at C5: key up 48.78 s, does not reach silence
-timing B   OP3 at C5: key up 48.78 s, does not reach silence
-timing B   OP5 at C5: key up 48.78 s, does not reach silence
+           note-on to silence · same scale for A and B
+
+           ─ key held · ╌ release · ↓ key-up · ┤ silence · ∞ no silence
+           intervals, not amplitude; times on the right are from note-on
+           positions rounded to the nearest cell
+
+timing A   C3 · key up 48.78 s
+           0       10      20      30      40     50 s
+           ├───────┼───────┼───────┼───────┼───────┤
+       OP1 ───────────────────────────────────────↓∞  does not reach silence
+       OP3 ───────────────────────────────────────↓∞  does not reach silence
+       OP5 ───────────────────────────────────────↓∞  does not reach silence
+
+timing B   C5 · key up 48.78 s
+           0       10      20      30      40     50 s
+           ├───────┼───────┼───────┼───────┼───────┤
+       OP1 ───────────────────────────────────────↓∞  does not reach silence
+       OP3 ───────────────────────────────────────↓∞  does not reach silence
+       OP5 ───────────────────────────────────────↓∞  does not reach silence
+
 settings   balance +0 · split C4 · shift +0/+0
 volume     total 99
 sliders    CS1 Pitch EG Level 4 (86) on A+B · CS2 OP2 Key velocity (17) on A
@@ -559,6 +698,7 @@ switches   EG forced damping off · sustain foot switch A+B · foot switch
 polyphony  16 notes · 8 + 8, at most 8 per side · 2 + 2 in unison poly
 pan        on-on · separated, moves both levels · control off
 tuning     1/4 tone preset 10 · root C · voice A + voice B · not published
+
 keys       61 keys, C2 to C7, one column per semitone
                C2          C3          C4          C5          C6         C7
            A   ████████████████████████│
@@ -570,6 +710,7 @@ pan EG     flat: levels 50/50/50/50, the centre (nothing moves)
 algorithms A three 2-operator pairs + B three 2-operator pairs
            both voices use algorithm 5: 22 of 128 voice bytes differ
 
+           A+B · algorithm 5
            ┌─────┐  ┌─────┐  ┌─────┐
            │ OP2 │  │ OP4 │  │ OP6 │◀─╮
            └──┬──┘  └──┬──┘  └──┬──┴──╯
@@ -592,44 +733,48 @@ answer, with what the file cannot say.
 $ dxconvey show performance alienazi.syx --slot 1 --describe
 PERFORMANCE 1 · PitecantropusErectus
 
-layout     two voices on every key: Orca Troia and Carlo Levi, not detuned
-           against each other
+layout     two voices on every key: Orca Troia and Carlo Levi
+           performance detune 0
+
 voice A    strings · plausible
            slow swell, no end, harmonic, one layer, drift with a pitch blip
+
 voice B    brass · plausible
            held note, long tail, inharmonic, dark, rich, opening
-why A      the envelope: attack slow (carrier R1 33 of 99), body swell, a
-           slow attack that dies away (L3 0 of 99), release infinite (R4 32,
-           L4 9).
-           the spectrum: carriers at 1.00 times the key. The highest
-           modulator reaches 4.00 times the key, so balanced.
-           the density: thin, 1 carrier (OP1) and 5 modulators.
-           the LFO: a triangle at speed 43 with a delay of 32 — drift,
-           smooth, late.
-           the pitch arc: the pitch EG levels (52, 49, 50, 50) at rates (73,
-           67, 99, 99) — blip.
-           the timbre path: static, the modulators ending at L3 28 against
-           the carriers' 0.
-           the feedback: strong (5 of 7), the layering detuned.
-           the touch: after touch, mod wheel, velocity.
-why B      the envelope: attack instant (carrier R1 67 of 99), body held (L3
-           99 of 99), release long (R4 21, L4 0).
-           the spectrum: carriers at 2 Hz, 105 Hz, 1 Hz fixed (not the key).
-           The highest modulator reaches 1.71 times the key, so dark.
-           the density: rich, 3 carriers (OP5, OP3, OP1) and 3 modulators.
-           the LFO: a triangle at speed 30 with a delay of 21 — drift,
-           smooth, delayed.
-           the pitch arc: the pitch EG levels (52, 57, 50, 50) at rates (99,
-           34, 39, 0) — blip.
-           the timbre path: opening, the modulators ending at L3 50 against
-           the carriers' 96.
-           the feedback: strong (5 of 7), the layering detuned.
-           the touch: after touch, mod wheel, velocity.
-note       what this cannot say: what a controller's EG bias is worth in
-           level steps (not measured), how bright it is in dB (no
-           level-to-dB curve), or how it really sounds (no recording was
-           heard).  Brightness and density are proxies of the parameters,
-           not measurements.
+
+why A
+  envelope attack slow (carrier R1 33 of 99), body swell, a slow attack that
+           dies away (L3 0 of 99), release infinite (R4 32, L4 9).
+  spectrum carriers at 1.00 times the key. The highest modulator reaches
+           4.00 times the key, so balanced.
+  density  thin, 1 carrier (OP1) and 5 modulators.
+  LFO      a triangle at speed 43 with a delay of 32 — drift, smooth, late.
+  pitch    the pitch EG levels (52, 49, 50, 50) at rates (73, 67, 99, 99) —
+           blip.
+  timbre   static, the modulators ending at L3 28 against the carriers' 0.
+  feedback strong (5 of 7).
+  layering detuned within this voice.
+  touch    after touch, mod wheel, velocity.
+
+why B
+  envelope attack instant (carrier R1 67 of 99), body held (L3 99 of 99),
+           release long (R4 21, L4 0).
+  spectrum carriers at 2 Hz, 105 Hz, 1 Hz fixed (not the key). The highest
+           modulator reaches 1.71 times the key, so dark.
+  density  rich, 3 carriers (OP5, OP3, OP1) and 3 modulators.
+  LFO      a triangle at speed 30 with a delay of 21 — drift, smooth,
+           delayed.
+  pitch    the pitch EG levels (52, 57, 50, 50) at rates (99, 34, 39, 0) —
+           blip.
+  timbre   opening, the modulators ending at L3 50 against the carriers' 96.
+  feedback strong (5 of 7).
+  layering detuned within this voice.
+  touch    after touch, mod wheel, velocity.
+
+limits     parameter-based description, not a listening test.
+           Controller EG bias has not been measured in level steps.
+           Brightness and density are parameter proxies, not acoustic
+           measurements; no brightness-in-dB result is available.
 ```
 
 ### The porting, and its register
