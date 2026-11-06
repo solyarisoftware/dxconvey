@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question about the README or the format claims
+    url: https://github.com/solyarisoftware/dxconvey/discussions/categories/q-a
+    about: A question that is not a defect and not a defined request belongs here, where the answer can be marked.
+  - name: Explore an idea or a workflow need
+    url: https://github.com/solyarisoftware/dxconvey/discussions/categories/ideas
+    about: Discuss usefulness and design before defining implementation work.
+  - name: Contribution and request guidelines
+    url: https://github.com/solyarisoftware/dxconvey/blob/main/CONTRIBUTING.md
+    about: How to report, propose and contribute, and what is worth doing before the code exists.
