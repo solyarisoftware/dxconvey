@@ -6,7 +6,7 @@
 > **COMING SOON — there is no source code in this repository yet**
 >
 > The tool is being written. The code lands here with the **first public release,
-> by December 2027**.
+> by December 2026**.
 >
 > Until then this page is the project: what the tool is for, the shape of its command
 > line, and the real output of every verb. The runs below are not a mock-up and not a
@@ -951,7 +951,7 @@ the [DX7 collection page](https://solyaris.altervista.org/dx7.html).
 
 This repository is a **coming soon**: it describes the project and shows what the
 tool prints, and it holds no code yet. The source code lands with the **first public
-release, by December 2027**. The sample
+release, by December 2026**. The sample
 package linked above is an earlier conversion example, not a source code release.
 
 What the first release carries is the reading of DX7II dumps, the porting to the DX7
