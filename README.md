@@ -798,7 +798,7 @@ CONVERT  alienazi.syx → out
 ```
 
 The register opens by saying what it does not claim, and then goes through the
-settings voice by voice. These are its first twenty lines — the file the command
+settings voice by voice. These are its opening paragraphs — the file the command
 above wrote:
 
 ```text
@@ -819,9 +819,10 @@ alienazi_1-32 — DX7 bank 1 of 2
 
 - DX7 function parameters
   A DX7 keeps one set of function parameters for the whole instrument, while
-  a DX7II keeps them per voice: the register names each setting once and
-  lists the voices that ask for it. No parameter change file is written: the
-  values are recorded here, not sent.
+  a DX7II keeps them per voice. Controller proposals require configuration
+  separately from the voice data; emulator instances need target-specific
+  settings. Numeric preservation does not establish acoustic equivalence. No
+  parameter change file is written: the values are recorded here, not sent.
 ```
 
 ### A reference sheet, and no file needed
