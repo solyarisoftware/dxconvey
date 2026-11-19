@@ -41,7 +41,7 @@ than merging them into "converted":
 | what can happen to a DX7II parameter | which ones | how it is treated |
 | --- | --- | --- |
 | **remap** it into the 128 bytes of a DX7 voice | the amplitude modulation sensitivity (0-7 → 0-3), the four pitch EG levels (rescaled from the range the DX7II voice declares) | rewritten by a named rule, so the voice arrives as close as the format allows |
-| **declare** it, because a DX7 has no place for it | unison detune, portamento, the controller ranges, the fractional key scaling, the LFO key trigger, the performances | listed in the register beside the bank, per voice, with what is lost |
+| **declare or configure separately**, because a DX7 voice file cannot hold it | controller and portamento function settings; unison detune, fractional scaling, LFO trigger and performance data | the register distinguishes separate settings from unsupported features and unknowns |
 | **silence** it | — | never: nothing is dropped without a line in the register |
 
 So the claim is not *lossless*, and it is not even *declared against silent*: it is
@@ -52,18 +52,23 @@ acoustic copy of the DX7II voice, and the register says so in its own words.
 Two equations hold the whole of it, and the rest of this page is their consequence:
 
 ```text
-DX7II voice       = DX7 voice (128 bytes) + 35 bytes a DX7 cannot hold
-DX7II performance = Voice A + Voice B + performance data
+DX7II bank voice  = 128-byte DX7 voice record + 35-byte packed AMEM supplement
+DX7II performance = Voice A [+ Voice B in dual/split] + performance data
 ```
 
-The DX7II keeps additional parameters beside the DX7 voice data. Some settings
+The individual edit buffers are a different representation: **155-byte VCED plus
+49-byte expanded ACED**, not a 35-byte ACED message. AMEM uses 35 packed bytes per
+bank voice; current individual exports use the documented 49-byte form and reject
+earlier 35-byte format-05 input. The DX7II keeps additional parameters beside its
+DX7 voice data. Some settings
 already fit the DX7, some need adaptation, and others cannot be stored in its
 voice file. The verdict is **exact**, **close** or **lossy**, voice by voice;
 carrying additional settings does not automatically mean losing them. The performance layer —
 single, dual or split, the detune, the balance, the split point, the slider
 assignment, the tuning — is a third object that a DX7 does not have, and it points to
-its two voices by slot number: extract both voices, drop their thirty-five bytes, and
-what is left is two voices **both truncated**, plus nothing of the layer.
+its active voices by slot number. Extracting their core bytes alone does not
+rebuild the performance; the register separates preserved data, adaptations,
+separate configuration and unverified reconstruction.
 
 ## The command line, in three layers
 
@@ -864,8 +869,8 @@ the six-operator line · [both]
     typical sounds
       · organs and flutes with several registrations
       · tubular bells, glockenspiel, celesta: the factory ORCH-CHIME and TUB BELLS use it
-      · electric piano: the factory E.PIANO 1 is this algorithm with the third pair at ratio 14.00
-        for the tine and the other two at 1.00
+      · electric piano: the factory E.PIANO 1 has OP2 at ratio 14.00 modulating OP1 for the tine;
+        the other operators are at 1.00
       · two- and three-part additive pads, choirs
 
     programming it
@@ -971,14 +976,16 @@ the shape of the command line:
 - **a library, not a list of files** — `search` answers over the dumps named on the command
   line, one query at a time. What is missing is the index that remembers them, so that a
   collection of banks becomes a catalogue to browse instead of a folder to read again.
-- **`lint fix`** — finding a programming error or an anomalous setting inside a voice (a
-  carrier silent, an envelope that never comes back, a scaling that cancels its operator)
-  and correcting it at the desk instead of discovering it on the instrument. The verb is
-  `lint`, the correction is its `fix` kind, because a verb says what you want and a kind
-  says which answer.
-- **a `recipe` for more targets** — `recipe` writes down today how Dexed and OPS7 play a
-  performance: one instance per voice with the controllers spread over the host, or one
-  instrument with two layers. The programs that read these files are compared, one by one,
+- **a consolidated lint answer** — a proposal, not an implemented command. It would
+  locate malformed data and unusual settings without treating a silent carrier or a long
+  envelope as an error by default. A corrected copy would require a documented safe
+  rule; intended parameter values cannot be guessed. Naming and repair scope remain
+  open decisions.
+- **a `recipe` for more targets** — current recipes print static reconstruction
+  instructions for Dexed and OPS7: one instance per voice with host routing, or one
+  instrument with two layers. They do not run the plugins or establish successful
+  reconstruction; practical target trials remain necessary. The programs that read
+  these files are compared, one by one,
   on [the DX7 emulators page](https://solyaris.altervista.org/dx7-emulators.html).
 - **`randomizer`** — a voice is a set of numbers that a hand can only reach so far: the plan
   is a verb that makes variations of one voice around its own behaviour and names what it
@@ -990,25 +997,24 @@ recipes for the two targets.
 
 ## The questions a DX7 owner asks
 
-**Can my DX7 load the bank as it is?** No. A DX7 reads a DX7 voice or a bank of thirty-two;
-an All-Data dump is what a DX7II writes, and a DX7 has no way to take it. Inside the dump,
-though, the two voice banks are already exactly what a DX7 sends when it dumps its memory —
-two standard messages, header and checksum included — so the export is a lift, not a
-rebuild. This tool is not the first to do it; it is the one that writes the register beside
-the banks.
+**Can my DX7 load a DX7II All-Data dump as it is?** A DX7 voice file or 32-voice
+bank is the appropriate input, not the complete DX7II memory arrangement. The dump's
+VMEM messages already contain the common packed DX7 voice core. Extracting that core
+is different from adapting it: `convert` applies the explicit AMS and pitch-EG rules
+where needed, and writes a register beside the resulting banks. It does not send MIDI.
 
-**Will the converted voice sound the same?** No, and the tool does not claim it will. What
-survives is the whole DX7 voice, byte for byte. What changes is everything that leaned on the
-thirty-five bytes: the amplitude modulation sensitivity is mapped from the eight values a
-DX7II sets onto the four a DX7 has, the pitch envelope is rescaled into the single range the
-DX7 offers, and the rest cannot be played on a DX7 at all. The register says, voice by
-voice, what was remapped and what was left behind.
+**Will the converted voice sound the same?** Acoustic equivalence has not been
+verified, and the tool does not promise it. Core voice data is preserved except for
+AMS bits and four pitch-EG levels when remapping requires changes. Some supplement
+settings have separate DX7 function counterparts; others have no destination, are
+inactive, or remain unknown. The register distinguishes those cases instead of
+calling every extra setting an audible loss.
 
-**Is there a lossless "save as DX7"?** No, and a tool that offers one is dropping the
-thirty-five bytes without saying so: the DX7 voice format has no room for them, which is a
-property of the machine Yamaha shipped in 1983, not of the converter. What a converter can
-choose is whether the loss is declared — remapped where a rule exists, declared where it
-does not, never silent.
+**Is there a lossless "save as DX7"?** Not as a general guarantee. Some voices fit
+without adaptation under the declared rules; others need remapping or separate
+function settings. A DX7 voice file cannot recreate the DX7II performance layer,
+user-tuning setup or every supplement feature. The register explains the source
+settings and reconstruction limits; a successful export is not a verified acoustic copy.
 
 ## Supporting the work
 
